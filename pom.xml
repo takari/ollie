@@ -8,14 +8,10 @@
   </parent>
   <groupId>com.walmartlabs.appserver</groupId>
   <artifactId>appserver-parent</artifactId>
-  <version>0.0.8</version>
+  <version>0.0.9-SNAPSHOT</version>
   <packaging>pom</packaging>
   <modules>
     <module>appserver</module>
     <module>appserver-targetplatform</module>
   </modules>
-
-  <scm>
-    <tag>appserver-parent-0.0.8</tag>
-  </scm>
 </project>
