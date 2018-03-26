@@ -33,8 +33,8 @@
   <dependencyManagement>
     <dependencies>
       <dependency>
-        <groupId>com.walmartlabs.appserver</groupId>
-        <artifactId>appserver-targetplatform</artifactId>
+        <groupId>com.walmartlabs.ollie</groupId>
+        <artifactId>ollie-targetplatform</artifactId>
         <version>${project.version}</version>
         <type>pom</type>
         <scope>import</scope>
