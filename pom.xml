@@ -8,11 +8,15 @@
   </parent>
   <groupId>com.walmartlabs.ollie</groupId>
   <artifactId>ollie-parent</artifactId>
-  <version>0.0.12-SNAPSHOT</version>
+  <version>0.0.12</version>
   <name>Ollie :: Parent</name>
   <packaging>pom</packaging>
   <modules>
     <module>ollie</module>
     <module>ollie-targetplatform</module>
   </modules>
+
+  <scm>
+    <tag>ollie-parent-0.0.12</tag>
+  </scm>
 </project>
