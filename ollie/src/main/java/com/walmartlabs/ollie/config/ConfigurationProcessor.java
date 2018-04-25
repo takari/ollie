@@ -25,7 +25,6 @@ public class ConfigurationProcessor {
 
   public com.typesafe.config.Config process() {
     Config configuration = ConfigFactory.load(name + ".conf", ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem());
-    System.out.println(configuration);
     //System.out.println(configuration.getString("c"));
     Config applicationConfiguration = configuration.getConfig(name);    
     Config environmentConfiguration = applicationConfiguration.getConfig(environment);     
