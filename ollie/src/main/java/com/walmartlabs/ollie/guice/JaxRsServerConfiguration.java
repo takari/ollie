@@ -7,7 +7,8 @@ import javax.inject.Provider;
 import org.apache.shiro.realm.Realm;
 
 import com.google.inject.Module;
-
+import com.walmartlabs.ollie.WebServerBuilder;
+import com.walmartlabs.ollie.model.FilterDefinition;
 
 public class JaxRsServerConfiguration {
   private String name;
@@ -18,6 +19,8 @@ public class JaxRsServerConfiguration {
   private String packageToScan;
   private List<Module> modules;
   private Provider<Realm> realm;
+  private List<Class<? extends Realm>> realms;
+  private List<FilterDefinition> filterChains;
 
   private JaxRsServerConfiguration(Builder builder) {
     this.name = builder.name;
@@ -28,6 +31,8 @@ public class JaxRsServerConfiguration {
     this.packageToScan = builder.packageToScan;
     this.modules = builder.modules;
     this.realm = builder.realm;
+    this.realms = builder.realms;
+    this.filterChains = builder.filterChains;
   }
 
   public String name() {
@@ -62,6 +67,14 @@ public class JaxRsServerConfiguration {
     return realm;
   }
 
+  public List<Class<? extends Realm>> realms() {
+    return realms;
+  }
+  
+  public List<FilterDefinition> filterChains() {
+    return filterChains;
+  }
+  
   public static Builder builder() {
     return new Builder();
   }
@@ -75,6 +88,8 @@ public class JaxRsServerConfiguration {
     private String packageToScan;
     private List<Module> modules;
     private Provider<Realm> realm;
+    private List<Class<? extends Realm>> realms;
+    private List<FilterDefinition> filterChains;
 
     private Builder() {}
 
@@ -112,9 +127,19 @@ public class JaxRsServerConfiguration {
       this.modules = modules;
       return this;
     }
-    
+        
     public Builder realm(Provider<Realm> realm) {
       this.realm = realm;
+      return this;
+    }
+
+    public Builder realms(List<Class<? extends Realm>> realms) {
+      this.realms = realms;
+      return this;
+    }
+
+    public Builder filterChains(List<FilterDefinition> filterChains) {
+      this.filterChains = filterChains;
       return this;
     }
 

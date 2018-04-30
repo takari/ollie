@@ -3,6 +3,7 @@ package com.walmartlabs.ollie.guice;
 import java.util.List;
 
 import javax.inject.Provider;
+import javax.servlet.Filter;
 
 import org.apache.shiro.realm.Realm;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
@@ -13,6 +14,7 @@ import com.google.inject.Module;
 import com.google.inject.servlet.GuiceFilter;
 import com.walmartlabs.ollie.WebServer;
 import com.walmartlabs.ollie.WebServerBuilder;
+import com.walmartlabs.ollie.model.FilterDefinition;
 
 public class JaxRsServerBuilder extends WebServerBuilder {
 
@@ -25,6 +27,9 @@ public class JaxRsServerBuilder extends WebServerBuilder {
   // We need to use Google's Provider because Shiro doesn't use JSR330
   private Provider<Realm> realm;
   private List<Module> modules = Lists.newArrayList();
+  // Security
+  private List<Class<? extends Realm>> realms;
+  private List<FilterDefinition> filterChains;
   
   public WebServer build() {    
     
@@ -37,6 +42,8 @@ public class JaxRsServerBuilder extends WebServerBuilder {
       .packageToScan(packageToScan)
       .modules(modules)
       .realm(realm)
+      .realms(realms)
+      .filterChains(filterChains)
       .build();
     
     contextListener(new AppServletContextListener(config));
@@ -52,8 +59,7 @@ public class JaxRsServerBuilder extends WebServerBuilder {
     this.name = name;
     return this;
   }
-  
-  
+    
   public JaxRsServerBuilder port(int port) {
     super.port(port);
     return this;
@@ -81,6 +87,22 @@ public class JaxRsServerBuilder extends WebServerBuilder {
   
   public JaxRsServerBuilder realm(Provider<Realm> realm) {
     this.realm = realm;
+    return this;
+  }
+
+  public JaxRsServerBuilder realm(Class<? extends Realm> realm) {
+    if(realms == null) {
+      realms = Lists.newArrayList();
+    }
+    realms.add(realm);
+    return this;
+  }  
+  
+  public JaxRsServerBuilder filterChain(String pattern, Class<? extends Filter> filterClass) {
+    if(filterChains == null) {
+      filterChains = Lists.newArrayList();
+    }
+    filterChains.add(new FilterDefinition(pattern, filterClass));
     return this;
   }
 }

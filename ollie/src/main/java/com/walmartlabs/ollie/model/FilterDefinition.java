@@ -6,6 +6,14 @@ public class FilterDefinition {
   String pattern;
   Class<? extends Filter> filterClass;
 
+  public FilterDefinition() {    
+  }
+
+  public FilterDefinition(String pattern, Class<? extends Filter> filterClass) {
+    this.pattern = pattern;
+    this.filterClass = filterClass;
+  }
+
   public String getPattern() {
     return pattern;
   }

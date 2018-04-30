@@ -1,5 +1,6 @@
 package com.walmartlabs.ollie.guice;
 
+import javax.servlet.Filter;
 import javax.servlet.ServletContext;
 import javax.ws.rs.Path;
 
@@ -7,11 +8,15 @@ import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.guice.aop.ShiroAopModule;
 import org.apache.shiro.guice.web.GuiceShiroFilter;
 import org.apache.shiro.guice.web.ShiroWebModule;
+import org.apache.shiro.realm.Realm;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.sonatype.siesta.server.SiestaServlet;
 import org.sonatype.siesta.server.resteasy.ResteasyModule;
 import org.sonatype.siesta.server.validation.ValidationModule;
 
 import com.google.common.collect.ImmutableMap;
+import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.matcher.Matchers;
 import com.google.inject.servlet.ServletModule;
@@ -19,9 +24,11 @@ import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.walmartlabs.ollie.config.ConfigurationModule;
 import com.walmartlabs.ollie.config.ConfigurationProcessor;
+import com.walmartlabs.ollie.model.FilterDefinition;
 
 public class AppServletModule extends ServletModule {
 
+  private static Logger logger = LoggerFactory.getLogger(AppServletModule.class);
   private final JaxRsServerConfiguration serverConfiguration;
 
   public AppServletModule(JaxRsServerConfiguration config) {
@@ -52,19 +59,18 @@ public class AppServletModule extends ServletModule {
     install(new ValidationModule());
     serve(serverConfiguration.api() + "/*").with(SiestaServlet.class, ImmutableMap.of("resteasy.servlet.mapping.prefix", serverConfiguration.api()));
 
-    // Shiro
-    if (serverConfiguration.realm() != null) {
-      install(new SecurityWebModule(getServletContext()));
-      install(new SecurityAnnotationsModule());
-      filter("/*").through(GuiceShiroFilter.class);
-    }
-
     // Configuration: should be moved entirely into the module
     // strategies for determining environment
     ConfigurationProcessor cp = new ConfigurationProcessor(serverConfiguration.name(), "development");
     install(ConfigurationModule.fromConfigWithPackage(cp.process(), serverConfiguration.packageToScan()));
+
+    if (serverConfiguration.realms() != null) {
+      install(new SecurityWebModule(getServletContext()));
+      install(new SecurityAnnotationsModule());
+      ShiroWebModule.bindGuiceFilter(binder()); // filter(/*).through(GuiceShiroFilter.class)
+    }
   }
-  
+
   public class SecurityWebModule extends ShiroWebModule {
 
     public SecurityWebModule(ServletContext servletContext) {
@@ -74,18 +80,26 @@ public class AppServletModule extends ServletModule {
     @Override
     @SuppressWarnings("unchecked")
     protected void configureShiroWeb() {
-      // The actual Realm implementation is left up to the client application
-      bindRealm().toProvider(serverConfiguration.realm());
-      addFilterChain("/logout", LOGOUT);
-      // Probably don't need these specifically
-      // addFilterChain(config.docs() + "/**", NO_SESSION_CREATION, ANON);
-      // addFilterChain(config.api() + "/**", NO_SESSION_CREATION, AUTHC_BASIC);
-      // Need to create a filter with the pluggable realm
-      addFilterChain("/**", NO_SESSION_CREATION, AUTHC_BASIC);
+
+      // Shiro Realms
+      for (Class<? extends Realm> realmClass : serverConfiguration.realms()) {
+        logger.info("Installing Shiro realm: {}.", realmClass.getName());
+        bindRealm().to(realmClass);
+      }
+
+      // Authentication Filters
+      if (serverConfiguration.filterChains() != null) {
+        for (FilterDefinition filterDefinition : serverConfiguration.filterChains()) {
+          String pattern = filterDefinition.getPattern();
+          Class<? extends Filter> filterClass = filterDefinition.getFilterClass();
+          logger.info("Installing authentication filter: {} -> {}.", pattern, filterClass.getName());
+          addFilterChain(pattern, Key.get(filterClass));
+        }
+      }
     }
   }
 
-  // This module enables support for the standard Shiro annotations which are as follows:
+  // This module enables support for the standard Shiro annotations in addition to any custom interceptors.
   //
   // @RequiresAuthentication 
   // https://shiro.apache.org/static/1.3.2/apidocs/org/apache/shiro/authz/annotation/RequiresAuthentication.html
