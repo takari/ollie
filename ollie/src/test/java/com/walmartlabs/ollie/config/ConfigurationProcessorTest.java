@@ -1,7 +1,7 @@
 package com.walmartlabs.ollie.config;
 
-import static org.junit.Assert.*;
-import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
 
 import java.io.File;
 
@@ -9,8 +9,6 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-
-import com.walmartlabs.ollie.config.ConfigurationProcessor;
 
 public class ConfigurationProcessorTest {
 
@@ -31,6 +29,7 @@ public class ConfigurationProcessorTest {
     assertEquals("dev-settle-token", config.getString("approver.settle.token"));    
     assertEquals("dev-jira-username", config.getString("jira.username"));
     assertEquals("dev-jira-password", config.getString("jira.password"));    
+    assertEquals("caring", config.getString("sharing"));    
   }  
   
   @Test
@@ -45,7 +44,7 @@ public class ConfigurationProcessorTest {
     //
     assertEquals("settletoken", config.getString("approver.settle.token"));    
     assertEquals("username", config.getString("jira.username"));
-    assertEquals("password", config.getString("jira.password"));
+    assertEquals("password", config.getString("jira.password"));    
   }
 
   @Test
