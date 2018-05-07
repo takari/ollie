@@ -38,6 +38,7 @@ public class ConfigurationProcessorTest {
     ConfigurationProcessor processor = new ConfigurationProcessor("gatekeeper");
     com.typesafe.config.Config config = processor.process();
     assertEquals("for different folks", config.getString("different-strokes"));    
+    System.clearProperty(ConfigurationProcessor.CONFIG_FILE);
   }    
   
   @Test
