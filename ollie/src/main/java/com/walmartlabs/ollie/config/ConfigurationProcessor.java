@@ -13,14 +13,22 @@ public class ConfigurationProcessor {
   public final static String CONFIG_FILE = "ollie.conf";
 
   private final String name;
-  private final String environment;
+  private final Environment environment;
   private final File overridesFile;
 
-  public ConfigurationProcessor(String name, String environment) {
+  public ConfigurationProcessor(String name) {
+    this(name, Environment.DEVELOPMENT, null);
+  }
+  
+  public ConfigurationProcessor(String name, File overridesFile) {
+    this(name, Environment.DEVELOPMENT, overridesFile);
+  }
+
+  public ConfigurationProcessor(String name, Environment environment) {
     this(name, environment, null);
   }
 
-  public ConfigurationProcessor(String name, String environment, File overridesFile) {
+  public ConfigurationProcessor(String name, Environment environment, File overridesFile) {
     this.name = name;
     this.environment = environment;
     this.overridesFile = overridesFile;
@@ -33,9 +41,10 @@ public class ConfigurationProcessor {
     } else {
       configurationName = name + ".conf";
     }
+            
     Config configuration = ConfigFactory.load(configurationName, ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem());
     Config applicationConfiguration = configuration.getConfig(name);
-    Config environmentConfiguration = applicationConfiguration.getConfig(environment);
+    Config environmentConfiguration = applicationConfiguration.getConfig(environment.identifier());
     Config result = environmentConfiguration.withFallback(applicationConfiguration);
     //
     // For development we want an easy way to plug in values without having to modify resources
@@ -57,7 +66,7 @@ public class ConfigurationProcessor {
     // out if the structure is not the same.
     //     
     Config overrides;
-    if (overridesFile != null) {
+    if (environment == Environment.DEVELOPMENT && overridesFile != null) {
       if (!overridesFile.exists()) {
         throw new RuntimeException(String.format("The specified overrides configuration doesn't exist: '%s'.", overridesFile));
       }
@@ -68,10 +77,10 @@ public class ConfigurationProcessor {
         throw new RuntimeException(String.format("The specified application '%s' is not present in the overrides file '%s'.", name, overridesFile));
       }
       try {
-        overrides = overrides.getConfig(environment);
+        overrides = overrides.getConfig(environment.identifier());
       } catch (ConfigException e) {
         throw new RuntimeException(
-          String.format("The specified environment '%s' is not present in the application configuration '%s' in the overrides file '%s'.", environment, name, overridesFile));
+          String.format("The specified environment '%s' is not present in the application configuration '%s' in the overrides file '%s'.", environment.identifier(), name, overridesFile));
       }
       return overrides.withFallback(result);
     } else {

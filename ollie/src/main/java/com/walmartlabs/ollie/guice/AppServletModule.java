@@ -24,6 +24,7 @@ import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.walmartlabs.ollie.config.ConfigurationModule;
 import com.walmartlabs.ollie.config.ConfigurationProcessor;
+import com.walmartlabs.ollie.config.Environment;
 import com.walmartlabs.ollie.model.FilterDefinition;
 
 public class AppServletModule extends ServletModule {
@@ -61,7 +62,7 @@ public class AppServletModule extends ServletModule {
 
     // Configuration: should be moved entirely into the module
     // strategies for determining environment
-    ConfigurationProcessor cp = new ConfigurationProcessor(serverConfiguration.name(), "development");
+    ConfigurationProcessor cp = new ConfigurationProcessor(serverConfiguration.name(), Environment.DEVELOPMENT);
     install(ConfigurationModule.fromConfigWithPackage(cp.process(), serverConfiguration.packageToScan()));
 
     if (serverConfiguration.realms() != null) {

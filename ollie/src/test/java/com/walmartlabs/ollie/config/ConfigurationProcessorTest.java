@@ -24,7 +24,7 @@ public class ConfigurationProcessorTest {
 
   @Test
   public void validateConfigurationProcessor() {
-    ConfigurationProcessor processor = new ConfigurationProcessor("gatekeeper", "development");
+    ConfigurationProcessor processor = new ConfigurationProcessor("gatekeeper");
     com.typesafe.config.Config config = processor.process();
     assertEquals("dev-settle-token", config.getString("approver.settle.token"));    
     assertEquals("dev-jira-username", config.getString("jira.username"));
@@ -35,7 +35,7 @@ public class ConfigurationProcessorTest {
   @Test
   public void validateConfigurationProcessorWhereConfigurationFileIsOverridenWithASystemProperty() {
     System.setProperty(ConfigurationProcessor.CONFIG_FILE, "different.conf");
-    ConfigurationProcessor processor = new ConfigurationProcessor("gatekeeper", "development");
+    ConfigurationProcessor processor = new ConfigurationProcessor("gatekeeper");
     com.typesafe.config.Config config = processor.process();
     assertEquals("for different folks", config.getString("different-strokes"));    
   }    
@@ -43,7 +43,7 @@ public class ConfigurationProcessorTest {
   @Test
   public void validateConfigurationProcessorUsingOverridesFile() {
     File overridesFile = new File(basedir, "src/test/resources/overrides.conf");
-    ConfigurationProcessor processor = new ConfigurationProcessor("gatekeeper", "development", overridesFile);
+    ConfigurationProcessor processor = new ConfigurationProcessor("gatekeeper", overridesFile);
     com.typesafe.config.Config config = processor.process();
     assertEquals("http://adapter.server.com:8080/adapter/rest/dj/simple/approvals", config.getString("approver.settle.url"));
     assertEquals("https://jira.server.com", config.getString("jira.server"));
@@ -58,7 +58,7 @@ public class ConfigurationProcessorTest {
   @Test
   public void validateConfigurationProcessorUsingNonExistentOverrides() {
     File overridesFile = new File(basedir, "src/test/resources/overrides-non-existent.conf");
-    ConfigurationProcessor processor = new ConfigurationProcessor("gatekeeper", "development", overridesFile);
+    ConfigurationProcessor processor = new ConfigurationProcessor("gatekeeper", overridesFile);
     exception.expect(RuntimeException.class);
     exception.expectMessage(containsString("The specified overrides configuration doesn't exist:"));
     processor.process();
@@ -67,7 +67,7 @@ public class ConfigurationProcessorTest {
   @Test
   public void validateConfigurationProcessorUsingOverridesFileReportsWrongStructureNoApplication() {
     File overridesFile = new File(basedir, "src/test/resources/overrides-wrong-structure-no-application.conf");
-    ConfigurationProcessor processor = new ConfigurationProcessor("gatekeeper", "development", overridesFile);
+    ConfigurationProcessor processor = new ConfigurationProcessor("gatekeeper", overridesFile);
     exception.expect(RuntimeException.class);
     exception.expectMessage(containsString("The specified application 'gatekeeper' is not present"));
     processor.process();
@@ -76,7 +76,7 @@ public class ConfigurationProcessorTest {
   @Test
   public void validateConfigurationProcessorUsingOverridesFileReportsWrongStructureNoEnvironment() {
     File overridesFile = new File(basedir, "src/test/resources/overrides-wrong-structure-no-environment.conf");
-    ConfigurationProcessor processor = new ConfigurationProcessor("gatekeeper", "development", overridesFile);
+    ConfigurationProcessor processor = new ConfigurationProcessor("gatekeeper", overridesFile);
     exception.expect(RuntimeException.class);
     exception.expectMessage(containsString("The specified environment 'development' is not present"));
     processor.process();
