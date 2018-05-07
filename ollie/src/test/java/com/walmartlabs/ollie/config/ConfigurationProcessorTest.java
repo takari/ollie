@@ -31,6 +31,14 @@ public class ConfigurationProcessorTest {
     assertEquals("dev-jira-password", config.getString("jira.password"));    
     assertEquals("caring", config.getString("sharing"));    
   }  
+
+  @Test
+  public void validateConfigurationProcessorWhereConfigurationFileIsOverridenWithASystemProperty() {
+    System.setProperty(ConfigurationProcessor.CONFIG_FILE, "different.conf");
+    ConfigurationProcessor processor = new ConfigurationProcessor("gatekeeper", "development");
+    com.typesafe.config.Config config = processor.process();
+    assertEquals("for different folks", config.getString("different-strokes"));    
+  }    
   
   @Test
   public void validateConfigurationProcessorUsingOverridesFile() {

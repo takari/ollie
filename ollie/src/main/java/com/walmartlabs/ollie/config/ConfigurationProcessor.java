@@ -10,6 +10,8 @@ import com.typesafe.config.ConfigResolveOptions;
 
 public class ConfigurationProcessor {
 
+  public final static String CONFIG_FILE = "ollie.conf";
+
   private final String name;
   private final String environment;
   private final File overridesFile;
@@ -25,7 +27,13 @@ public class ConfigurationProcessor {
   }
 
   public com.typesafe.config.Config process() {
-    Config configuration = ConfigFactory.load(name + ".conf", ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem());
+    String configurationName;
+    if (System.getProperty(CONFIG_FILE) != null) {
+      configurationName = System.getProperty(CONFIG_FILE);
+    } else {
+      configurationName = name + ".conf";
+    }
+    Config configuration = ConfigFactory.load(configurationName, ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem());
     Config applicationConfiguration = configuration.getConfig(name);
     Config environmentConfiguration = applicationConfiguration.getConfig(environment);
     Config result = environmentConfiguration.withFallback(applicationConfiguration);
@@ -62,7 +70,8 @@ public class ConfigurationProcessor {
       try {
         overrides = overrides.getConfig(environment);
       } catch (ConfigException e) {
-        throw new RuntimeException(String.format("The specified environment '%s' is not present in the application configuration '%s'.", environment, name));
+        throw new RuntimeException(
+          String.format("The specified environment '%s' is not present in the application configuration '%s' in the overrides file '%s'.", environment, name, overridesFile));
       }
       return overrides.withFallback(result);
     } else {
