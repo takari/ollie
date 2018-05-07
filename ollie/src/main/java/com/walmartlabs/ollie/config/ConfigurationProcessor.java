@@ -44,7 +44,7 @@ public class ConfigurationProcessor {
             
     Config configuration = ConfigFactory.load(configurationName, ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem());
     Config applicationConfiguration = configuration.getConfig(name);
-    Config environmentConfiguration = applicationConfiguration.getConfig(environment.identifier());
+    Config environmentConfiguration = applicationConfiguration.getConfig(environment.id());
     Config result = environmentConfiguration.withFallback(applicationConfiguration);
     //
     // For development we want an easy way to plug in values without having to modify resources
@@ -77,10 +77,10 @@ public class ConfigurationProcessor {
         throw new RuntimeException(String.format("The specified application '%s' is not present in the overrides file '%s'.", name, overridesFile));
       }
       try {
-        overrides = overrides.getConfig(environment.identifier());
+        overrides = overrides.getConfig(environment.id());
       } catch (ConfigException e) {
         throw new RuntimeException(
-          String.format("The specified environment '%s' is not present in the application configuration '%s' in the overrides file '%s'.", environment.identifier(), name, overridesFile));
+          String.format("The specified environment '%s' is not present in the application configuration '%s' in the overrides file '%s'.", environment.id(), name, overridesFile));
       }
       return overrides.withFallback(result);
     } else {
