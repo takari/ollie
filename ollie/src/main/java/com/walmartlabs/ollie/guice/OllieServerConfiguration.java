@@ -10,7 +10,7 @@ import com.google.inject.Module;
 import com.walmartlabs.ollie.WebServerBuilder;
 import com.walmartlabs.ollie.model.FilterDefinition;
 
-public class JaxRsServerConfiguration {
+public class OllieServerConfiguration {
   private String name;
   private String api;
   private String docs;
@@ -22,7 +22,7 @@ public class JaxRsServerConfiguration {
   private List<Class<? extends Realm>> realms;
   private List<FilterDefinition> filterChains;
 
-  private JaxRsServerConfiguration(Builder builder) {
+  private OllieServerConfiguration(Builder builder) {
     this.name = builder.name;
     this.api = builder.api;
     this.docs = builder.docs;
@@ -143,8 +143,8 @@ public class JaxRsServerConfiguration {
       return this;
     }
 
-    public JaxRsServerConfiguration build() {
-      return new JaxRsServerConfiguration(this);
+    public OllieServerConfiguration build() {
+      return new OllieServerConfiguration(this);
     }
   }
 }

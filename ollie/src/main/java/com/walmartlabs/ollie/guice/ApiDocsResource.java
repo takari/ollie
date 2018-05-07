@@ -27,7 +27,7 @@ public class ApiDocsResource implements Resource {
   private final Swagger swagger;
 
   @Inject
-  public ApiDocsResource(JaxRsClasses holder, JaxRsServerConfiguration config) {
+  public ApiDocsResource(JaxRsClasses holder, OllieServerConfiguration config) {
     swagger = new Swagger();
     swagger.setSchemes(ImmutableList.of(Scheme.forValue("http")));
     swagger.setHost("localhost:9000");

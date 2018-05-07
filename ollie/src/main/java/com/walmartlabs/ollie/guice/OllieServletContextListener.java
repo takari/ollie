@@ -24,16 +24,16 @@ import static com.google.common.base.Preconditions.checkNotNull;
  *
  * @since 2.0
  */
-public class AppServletContextListener
+public class OllieServletContextListener
   extends GuiceServletContextListener {
   
   public static final String INJECTOR_KEY = "@INJECTOR"; // NOTE: GuiceServletContextListener binds this into Injector.class.getName()
   protected final Logger log = LoggerFactory.getLogger(getClass());
   private ServletContext servletContext;
   private Injector injector;
-  private final JaxRsServerConfiguration config;
+  private final OllieServerConfiguration config;
 
-  public AppServletContextListener(JaxRsServerConfiguration config) {
+  public OllieServletContextListener(OllieServerConfiguration config) {
     this.config = config;
   }
   
@@ -74,7 +74,7 @@ public class AppServletContextListener
 
   protected void configureModules(final List<Module> modules) {
     modules.add(new SpaceModule(new URLClassSpace(getClass().getClassLoader()), BeanScanning.CACHE));
-    modules.add(new AppServletModule(config));
+    modules.add(new OllieServletModule(config));
     modules.addAll(config.modules());
   }
 }

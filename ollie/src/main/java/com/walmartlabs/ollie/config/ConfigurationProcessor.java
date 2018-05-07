@@ -2,6 +2,9 @@ package com.walmartlabs.ollie.config;
 
 import java.io.File;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
@@ -11,7 +14,8 @@ import com.typesafe.config.ConfigResolveOptions;
 public class ConfigurationProcessor {
 
   public final static String CONFIG_FILE = "ollie.conf";
-
+  private final static Logger logger = LoggerFactory.getLogger(ConfigurationProcessor.class);
+  
   private final String name;
   private final Environment environment;
   private final File overridesFile;
@@ -41,7 +45,8 @@ public class ConfigurationProcessor {
     } else {
       configurationName = name + ".conf";
     }
-            
+    logger.info("Processing configuration resource {}", configurationName);        
+    
     Config configuration = ConfigFactory.load(configurationName, ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem());
     Config applicationConfiguration = configuration.getConfig(name);
     Config environmentConfiguration = applicationConfiguration.getConfig(environment.id());

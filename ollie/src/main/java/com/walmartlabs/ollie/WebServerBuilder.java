@@ -12,7 +12,7 @@ import org.eclipse.jetty.security.SecurityHandler;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.walmartlabs.ollie.guice.JaxRsServerBuilder;
+import com.walmartlabs.ollie.guice.OllieServerBuilder;
 import com.walmartlabs.ollie.model.WebServerDefinitionBuilder;
 
 public class WebServerBuilder {

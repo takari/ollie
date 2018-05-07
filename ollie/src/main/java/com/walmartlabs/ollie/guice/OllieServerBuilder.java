@@ -16,7 +16,7 @@ import com.walmartlabs.ollie.WebServer;
 import com.walmartlabs.ollie.WebServerBuilder;
 import com.walmartlabs.ollie.model.FilterDefinition;
 
-public class JaxRsServerBuilder extends WebServerBuilder {
+public class OllieServerBuilder extends WebServerBuilder {
 
   private String name = "application";
   private String api = "/api";
@@ -33,7 +33,7 @@ public class JaxRsServerBuilder extends WebServerBuilder {
   
   public WebServer build() {    
     
-    JaxRsServerConfiguration config = JaxRsServerConfiguration.builder()
+    OllieServerConfiguration config = OllieServerConfiguration.builder()
       .name(name)
       .api(api)
       .docs(docs)
@@ -46,7 +46,7 @@ public class JaxRsServerBuilder extends WebServerBuilder {
       .filterChains(filterChains)
       .build();
     
-    contextListener(new AppServletContextListener(config));
+    contextListener(new OllieServletContextListener(config));
     filter("/*").through(CrossOriginFilter.class);
     filter("/*").through(GuiceFilter.class);
     if (docs != null) {
@@ -55,42 +55,42 @@ public class JaxRsServerBuilder extends WebServerBuilder {
     return new WebServer(webServerDefinitionBuilder.build());
   }
 
-  public JaxRsServerBuilder name(String name) {
+  public OllieServerBuilder name(String name) {
     this.name = name;
     return this;
   }
     
-  public JaxRsServerBuilder port(int port) {
+  public OllieServerBuilder port(int port) {
     super.port(port);
     return this;
   }
 
-  public JaxRsServerBuilder api(String api) {
+  public OllieServerBuilder api(String api) {
     this.api = api;
     return this;
   }
 
-  public JaxRsServerBuilder docs(String docs) {
+  public OllieServerBuilder docs(String docs) {
     this.docs = docs;
     return this;
   }
 
-  public JaxRsServerBuilder packageToScan(String packageToScan) {
+  public OllieServerBuilder packageToScan(String packageToScan) {
     this.packageToScan = packageToScan;
     return this;
   }
   
-  public JaxRsServerBuilder module(Module module) {
+  public OllieServerBuilder module(Module module) {
     this.modules.add(module);
     return this;
   }
   
-  public JaxRsServerBuilder realm(Provider<Realm> realm) {
+  public OllieServerBuilder realm(Provider<Realm> realm) {
     this.realm = realm;
     return this;
   }
 
-  public JaxRsServerBuilder realm(Class<? extends Realm> realm) {
+  public OllieServerBuilder realm(Class<? extends Realm> realm) {
     if(realms == null) {
       realms = Lists.newArrayList();
     }
@@ -98,7 +98,7 @@ public class JaxRsServerBuilder extends WebServerBuilder {
     return this;
   }  
   
-  public JaxRsServerBuilder filterChain(String pattern, Class<? extends Filter> filterClass) {
+  public OllieServerBuilder filterChain(String pattern, Class<? extends Filter> filterClass) {
     if(filterChains == null) {
       filterChains = Lists.newArrayList();
     }

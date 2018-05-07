@@ -28,19 +28,19 @@ import com.walmartlabs.ollie.config.Environment;
 import com.walmartlabs.ollie.config.EnvironmentSelector;
 import com.walmartlabs.ollie.model.FilterDefinition;
 
-public class AppServletModule extends ServletModule {
+public class OllieServletModule extends ServletModule {
 
-  private static Logger logger = LoggerFactory.getLogger(AppServletModule.class);
-  private final JaxRsServerConfiguration serverConfiguration;
+  private static Logger logger = LoggerFactory.getLogger(OllieServletModule.class);
+  private final OllieServerConfiguration serverConfiguration;
 
-  public AppServletModule(JaxRsServerConfiguration config) {
+  public OllieServletModule(OllieServerConfiguration config) {
     this.serverConfiguration = config;
   }
 
   @Override
   protected void configureServlets() {
 
-    bind(JaxRsServerConfiguration.class).toInstance(serverConfiguration);
+    bind(OllieServerConfiguration.class).toInstance(serverConfiguration);
 
     JaxRsClasses resourcesHolder = new JaxRsClasses();
     if (serverConfiguration.docs() != null) {
