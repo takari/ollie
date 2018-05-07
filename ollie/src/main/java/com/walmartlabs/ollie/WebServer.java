@@ -92,7 +92,11 @@ public class WebServer  {
       }
     }
 
-    ServletContextHandler applicationContext = new ServletContextHandler(ServletContextHandler.NO_SESSIONS);
+    int options = ServletContextHandler.NO_SESSIONS;
+    if (webServerDefinition.isSessionsEnabled()) {
+      options |= ServletContextHandler.SESSIONS;
+    }
+    ServletContextHandler applicationContext = new ServletContextHandler(options);
     construct(webServerDefinition, applicationContext);
     contextHandlerCollection.addHandler(applicationContext);
 

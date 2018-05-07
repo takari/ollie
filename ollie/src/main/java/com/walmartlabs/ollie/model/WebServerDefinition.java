@@ -11,6 +11,7 @@ public class WebServerDefinition {
   int minThreads = 2;
   int maxThreads = 200;
   int threadMaxIdleTime;
+  boolean sessionsEnabled = false;
   List<FilterDefinition> filterDefintions = Lists.newArrayList();
   List<ServletDefinition> servletDefinitions = Lists.newArrayList();
   List<StaticResourceDefinition> staticContentDefinitions = Lists.newArrayList();
@@ -48,6 +49,14 @@ public class WebServerDefinition {
 
   public int getThreadMaxIdleTime() {
     return threadMaxIdleTime;
+  }
+
+  public void setSessionsEnabled(boolean sessionsEnabled) {
+    this.sessionsEnabled = sessionsEnabled;
+  }
+
+  public boolean isSessionsEnabled() {
+    return sessionsEnabled;
   }
 
   public List<FilterDefinition> getFilterDefintions() {

@@ -65,6 +65,11 @@ public class OllieServerBuilder extends WebServerBuilder {
     return this;
   }
 
+  public OllieServerBuilder sessionsEnabled(boolean sessionsEnabled) {
+    super.sessionsEnabled(sessionsEnabled);
+    return this;
+  }
+
   public OllieServerBuilder api(String api) {
     this.api = api;
     return this;
