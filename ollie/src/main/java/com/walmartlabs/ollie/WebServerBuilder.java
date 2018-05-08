@@ -33,6 +33,11 @@ public class WebServerBuilder {
     return this;
   }
 
+  public WebServerBuilder sessionsEnabled(boolean sessionsEnabled) {
+    webServerDefinitionBuilder.sessionsEnabled(sessionsEnabled);
+    return this;
+  }
+
   public WebServerBuilder filter(String pattern) {
     webServerDefinitionBuilder.filter(pattern);
     return this;
