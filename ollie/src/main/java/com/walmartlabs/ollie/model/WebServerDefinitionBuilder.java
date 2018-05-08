@@ -110,7 +110,12 @@ public class WebServerDefinitionBuilder {
     sitesDefinition.setSitesDirectory(sitesDirectory);
     webServerDefinition.setSitesDefinition(sitesDefinition);    
     return this;
-  }  
+  }
+
+  public WebServerDefinitionBuilder sessionsEnabled(boolean sessionEnabled) {
+    webServerDefinition.setSessionsEnabled(sessionEnabled);
+    return this;
+  }
   
   public WebServerDefinition build() {
     return webServerDefinition;
