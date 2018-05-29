@@ -1,19 +1,16 @@
 package com.walmartlabs.ollie;
 
-import java.io.File;
-import java.util.List;
-import java.util.Map;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.walmartlabs.ollie.model.WebServerDefinitionBuilder;
+import org.eclipse.jetty.security.SecurityHandler;
 
 import javax.servlet.Filter;
 import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpServlet;
-
-import org.eclipse.jetty.security.SecurityHandler;
-
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.walmartlabs.ollie.guice.OllieServerBuilder;
-import com.walmartlabs.ollie.model.WebServerDefinitionBuilder;
+import java.io.File;
+import java.util.List;
+import java.util.Map;
 
 public class WebServerBuilder {
 
@@ -38,7 +35,7 @@ public class WebServerBuilder {
     return this;
   }
 
-  public WebServerBuilder filter(String pattern) {
+  public WebServerBuilder filter(String... pattern) {
     webServerDefinitionBuilder.filter(pattern);
     return this;
   }

@@ -29,9 +29,9 @@ public class WebServerDefinitionBuilder {
     return this;
   }
 
-  public WebServerDefinitionBuilder filter(String pattern) {
+  public WebServerDefinitionBuilder filter(String... patterns) {
     filterDefinition = new FilterDefinition();
-    filterDefinition.setPattern(pattern);
+    filterDefinition.setPatterns(patterns);
     return this;
   }
 

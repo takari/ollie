@@ -93,10 +93,12 @@ public class OllieServletModule extends ServletModule {
       // Authentication Filters
       if (serverConfiguration.filterChains() != null) {
         for (FilterDefinition filterDefinition : serverConfiguration.filterChains()) {
-          String pattern = filterDefinition.getPattern();
-          Class<? extends Filter> filterClass = filterDefinition.getFilterClass();
-          logger.info("Installing authentication filter: {} -> {}.", pattern, filterClass.getName());
-          addFilterChain(pattern, Key.get(filterClass));
+          String[] patterns = filterDefinition.getPatterns();
+          for (String pattern : patterns) {
+            Class<? extends Filter> filterClass = filterDefinition.getFilterClass();
+            logger.info("Installing authentication filter: {} -> {}.", pattern, filterClass.getName());
+            addFilterChain(pattern, Key.get(filterClass));
+          }
         }
       }
     }
