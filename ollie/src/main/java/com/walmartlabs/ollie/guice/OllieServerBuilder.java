@@ -102,7 +102,7 @@ public class OllieServerBuilder extends WebServerBuilder {
     if(filterChains == null) {
       filterChains = Lists.newArrayList();
     }
-    filterChains.add(new FilterDefinition(pattern, filterClass));
+    filterChains.add(new FilterDefinition(new String[] {pattern}, filterClass));
     return this;
   }
 }
