@@ -131,7 +131,7 @@ public class OllieServerBuilder {
     if(filterChains == null) {
       filterChains = Lists.newArrayList();
     }
-    filterChains.add(new FilterDefinition(pattern, filterClass));
+    filterChains.add(new FilterDefinition(new String[] {pattern}, filterClass));
     return this;
   }
   
@@ -156,8 +156,8 @@ public class OllieServerBuilder {
     return this;
   }
 
-  public OllieServerBuilder filter(String pattern) {
-    webServerDefinitionBuilder.filter(pattern);
+  public OllieServerBuilder filter(String... patterns) {
+    webServerDefinitionBuilder.filter(patterns);
     return this;
   }
 

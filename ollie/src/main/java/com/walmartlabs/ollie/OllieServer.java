@@ -122,7 +122,10 @@ public class OllieServer {
     }
 
     for (FilterDefinition filterDefinition : webServerDefinition.getFilterDefintions()) {
-      applicationContext.addFilter(new FilterHolder(filterDefinition.getFilterClass()), filterDefinition.getPattern(), null);
+      String[] patterns = filterDefinition.getPatterns();
+      for (String pattern : patterns) {
+        applicationContext.addFilter(new FilterHolder(filterDefinition.getFilterClass()), pattern, null);
+      }
     }
     for (ServletDefinition servletDefinition : webServerDefinition.getServletDefinitions()) {
       if (servletDefinition.getWar() != null) {

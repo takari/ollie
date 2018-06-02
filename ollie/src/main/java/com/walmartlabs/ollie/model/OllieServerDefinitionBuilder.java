@@ -29,9 +29,10 @@ public class OllieServerDefinitionBuilder {
     return this;
   }
 
-  public OllieServerDefinitionBuilder filter(String pattern) {
+
+  public OllieServerDefinitionBuilder filter(String... patterns) {
     filterDefinition = new FilterDefinition();
-    filterDefinition.setPattern(pattern);
+    filterDefinition.setPatterns(patterns);
     return this;
   }
 

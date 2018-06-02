@@ -3,23 +3,23 @@ package com.walmartlabs.ollie.model;
 import javax.servlet.Filter;
 
 public class FilterDefinition {
-  String pattern;
+  String[] patterns;
   Class<? extends Filter> filterClass;
 
   public FilterDefinition() {    
   }
 
-  public FilterDefinition(String pattern, Class<? extends Filter> filterClass) {
-    this.pattern = pattern;
+  public FilterDefinition(String[] patterns, Class<? extends Filter> filterClass) {
+    this.patterns = patterns;
     this.filterClass = filterClass;
   }
 
-  public String getPattern() {
-    return pattern;
+  public String[] getPatterns() {
+    return patterns;
   }
 
-  public void setPattern(String pattern) {
-    this.pattern = pattern;
+  public void setPatterns(String... patterns) {
+    this.patterns = patterns;
   }
 
   public Class<? extends Filter> getFilterClass() {
@@ -32,6 +32,6 @@ public class FilterDefinition {
 
   @Override
   public String toString() {
-    return "FilterDefinition [pattern=" + pattern + ", filterClass=" + filterClass + "]";
+    return "FilterDefinition [patterns=" + patterns + ", filterClass=" + filterClass + "]";
   }
 }
