@@ -10,7 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
- 
+
 import org.sonatype.siesta.Resource;
 
 import com.google.common.collect.ImmutableList;
@@ -27,7 +27,7 @@ public class ApiDocsResource implements Resource {
   private final Swagger swagger;
 
   @Inject
-  public ApiDocsResource(JaxRsClasses holder, OllieServerConfiguration config) {
+  public ApiDocsResource(JaxRsClasses holder, OllieServerBuilder config) {
     swagger = new Swagger();
     swagger.setSchemes(ImmutableList.of(Scheme.forValue("http")));
     swagger.setHost("localhost:9000");

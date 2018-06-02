@@ -13,89 +13,89 @@ import org.eclipse.jetty.security.SecurityHandler;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
-public class WebServerDefinitionBuilder {
+public class OllieServerDefinitionBuilder {
 
-  private WebServerDefinition webServerDefinition;
+  private OllieServerDefinition webServerDefinition;
   private StaticResourceDefinition staticContentDefinition;
   private FilterDefinition filterDefinition;
   private ServletDefinition servletDefinition;
 
-  public WebServerDefinitionBuilder() {
-    webServerDefinition = new WebServerDefinition();
+  public OllieServerDefinitionBuilder() {
+    webServerDefinition = new OllieServerDefinition();
   }
 
-  public WebServerDefinitionBuilder port(int port) {
+  public OllieServerDefinitionBuilder port(int port) {
     webServerDefinition.setPort(port);
     return this;
   }
 
-  public WebServerDefinitionBuilder filter(String pattern) {
+  public OllieServerDefinitionBuilder filter(String pattern) {
     filterDefinition = new FilterDefinition();
     filterDefinition.setPattern(pattern);
     return this;
   }
 
-  public WebServerDefinitionBuilder through(Class<? extends Filter> filterClass) {
+  public OllieServerDefinitionBuilder through(Class<? extends Filter> filterClass) {
     filterDefinition.setFilterClass(filterClass);
     webServerDefinition.addFilterDefinition(filterDefinition);
     return this;
   }
 
-  public WebServerDefinitionBuilder serve(String pattern) {
+  public OllieServerDefinitionBuilder serve(String pattern) {
     return serve(pattern, Lists.<String>newArrayList());
   }
 
-  public WebServerDefinitionBuilder serve(String pattern, List<String> welcomeFiles) {
+  public OllieServerDefinitionBuilder serve(String pattern, List<String> welcomeFiles) {
     servletDefinition = new ServletDefinition();
     servletDefinition.setPattern(pattern);
     return this;
   }
 
-  public WebServerDefinitionBuilder with(Class<? extends HttpServlet> servletClass) {
+  public OllieServerDefinitionBuilder with(Class<? extends HttpServlet> servletClass) {
     return with(servletClass, Maps.<String,String>newHashMap());
   }
 
-  public WebServerDefinitionBuilder with(Class<? extends HttpServlet> servletClass, Map<String, String> parameters) {
+  public OllieServerDefinitionBuilder with(Class<? extends HttpServlet> servletClass, Map<String, String> parameters) {
     servletDefinition.setServletClass(servletClass);
     servletDefinition.setParameters(parameters);
     webServerDefinition.addServletDefinition(servletDefinition);
     return this;
   }
 
-  public WebServerDefinitionBuilder with(HttpServlet servlet) {
+  public OllieServerDefinitionBuilder with(HttpServlet servlet) {
     servletDefinition.setServlet(servlet);
     webServerDefinition.addServletDefinition(servletDefinition);
     return this;
   }
 
-  public WebServerDefinitionBuilder with(File webapp) {
+  public OllieServerDefinitionBuilder with(File webapp) {
     servletDefinition.setWar(webapp);
     webServerDefinition.addServletDefinition(servletDefinition);
     return this;
   }  
   
-  public WebServerDefinitionBuilder with(File webapp, SecurityHandler securityHandler) {
+  public OllieServerDefinitionBuilder with(File webapp, SecurityHandler securityHandler) {
     servletDefinition.setWar(webapp);
     servletDefinition.setSecurityHandler(securityHandler);
     webServerDefinition.addServletDefinition(servletDefinition);
     return this;    
   }  
   
-  public WebServerDefinitionBuilder at(String path) {
+  public OllieServerDefinitionBuilder at(String path) {
     staticContentDefinition = new StaticResourceDefinition();
     staticContentDefinition.setPath(path);
     return this;
   }
 
-  public WebServerDefinitionBuilder resource(String resource) {
+  public OllieServerDefinitionBuilder resource(String resource) {
     return resource(resource, Lists.<String>newArrayList());
   }
 
-  public WebServerDefinitionBuilder resource(String resource, List<String> welcomeFiles) {
+  public OllieServerDefinitionBuilder resource(String resource, List<String> welcomeFiles) {
     return resource(resource, welcomeFiles, false);
   } 
 
-  public WebServerDefinitionBuilder resource(String resource, List<String> welcomeFiles, boolean listing) {
+  public OllieServerDefinitionBuilder resource(String resource, List<String> welcomeFiles, boolean listing) {
     staticContentDefinition.setResource(resource);
     staticContentDefinition.setListing(listing);
     if (welcomeFiles != null) {
@@ -105,23 +105,23 @@ public class WebServerDefinitionBuilder {
     return this;
   }
   
-  public WebServerDefinitionBuilder sites(File sitesDirectory) {
+  public OllieServerDefinitionBuilder sites(File sitesDirectory) {
     SitesDefinition sitesDefinition = new SitesDefinition();
     sitesDefinition.setSitesDirectory(sitesDirectory);
     webServerDefinition.setSitesDefinition(sitesDefinition);    
     return this;
   }
 
-  public WebServerDefinitionBuilder sessionsEnabled(boolean sessionEnabled) {
+  public OllieServerDefinitionBuilder sessionsEnabled(boolean sessionEnabled) {
     webServerDefinition.setSessionsEnabled(sessionEnabled);
     return this;
   }
   
-  public WebServerDefinition build() {
+  public OllieServerDefinition build() {
     return webServerDefinition;
   }
 
-  public WebServerDefinitionBuilder contextListener(ServletContextListener contextListener) {
+  public OllieServerDefinitionBuilder contextListener(ServletContextListener contextListener) {
     webServerDefinition.contextListener(contextListener);
     return this;
     

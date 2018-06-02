@@ -31,9 +31,9 @@ public class OllieServletContextListener
   protected final Logger log = LoggerFactory.getLogger(getClass());
   private ServletContext servletContext;
   private Injector injector;
-  private final OllieServerConfiguration config;
+  private final OllieServerBuilder config;
 
-  public OllieServletContextListener(OllieServerConfiguration config) {
+  public OllieServletContextListener(OllieServerBuilder config) {
     this.config = config;
   }
   

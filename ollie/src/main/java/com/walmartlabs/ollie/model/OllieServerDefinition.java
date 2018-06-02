@@ -6,7 +6,7 @@ import javax.servlet.ServletContextListener;
 
 import com.google.common.collect.Lists;
 
-public class WebServerDefinition {
+public class OllieServerDefinition {
   int port = 8080;
   int minThreads = 2;
   int maxThreads = 200;

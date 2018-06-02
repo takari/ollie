@@ -31,16 +31,16 @@ import com.walmartlabs.ollie.model.FilterDefinition;
 public class OllieServletModule extends ServletModule {
 
   private static Logger logger = LoggerFactory.getLogger(OllieServletModule.class);
-  private final OllieServerConfiguration serverConfiguration;
+  private final OllieServerBuilder serverConfiguration;
 
-  public OllieServletModule(OllieServerConfiguration config) {
+  public OllieServletModule(OllieServerBuilder config) {
     this.serverConfiguration = config;
   }
 
   @Override
   protected void configureServlets() {
 
-    bind(OllieServerConfiguration.class).toInstance(serverConfiguration);
+    bind(OllieServerBuilder.class).toInstance(serverConfiguration);
 
     JaxRsClasses resourcesHolder = new JaxRsClasses();
     if (serverConfiguration.docs() != null) {

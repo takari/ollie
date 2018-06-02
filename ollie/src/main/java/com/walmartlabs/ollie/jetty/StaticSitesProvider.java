@@ -1,4 +1,4 @@
-package com.walmartlabs.ollie;
+package com.walmartlabs.ollie.jetty;
 
 import java.io.File;
 import java.io.FilenameFilter;

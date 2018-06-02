@@ -19,37 +19,36 @@ import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.webapp.WebAppContext;
 
-import com.google.common.base.Preconditions;
+import com.walmartlabs.ollie.guice.OllieServerBuilder;
+import com.walmartlabs.ollie.jetty.StaticSitesProvider;
 import com.walmartlabs.ollie.model.FilterDefinition;
+import com.walmartlabs.ollie.model.OllieServerDefinition;
 import com.walmartlabs.ollie.model.ServletDefinition;
 import com.walmartlabs.ollie.model.StaticResourceDefinition;
-import com.walmartlabs.ollie.model.WebServerDefinition;
 
 // http://stackoverflow.com/questions/20043097/jetty-9-embedded-adding-handlers-during-runtime
 
-public class WebServer  {
+public class OllieServer {
 
   protected final Server server;
 
-  public WebServer(WebServerDefinition webServerDefinition) {
+  public OllieServer(OllieServerDefinition webServerDefinition) {
     this.server = build(webServerDefinition);
   }
 
   public void start() {
     try {
       server.start();
-    } catch (
-    Exception e) {
+    } catch (Exception e) {
       throw new RuntimeException(e);
-    }    
+    }
   }
 
   public void startAndWait() {
     try {
       server.start();
       server.join();
-    } catch (
-    Exception e) {
+    } catch (Exception e) {
       throw new RuntimeException(e);
     }
   }
@@ -62,7 +61,7 @@ public class WebServer  {
     }
   }
 
-  public Server build(WebServerDefinition webServerDefinition) {
+  public Server build(OllieServerDefinition webServerDefinition) {
     QueuedThreadPool threadPool = new QueuedThreadPool(webServerDefinition.getMaxThreads());
     threadPool.setMinThreads(webServerDefinition.getMinThreads());
     // threadPool.setIdleTimeout(Ints.checkedCast(config.getThreadMaxIdleTime().toMillis()));
@@ -116,7 +115,7 @@ public class WebServer  {
     return server;
   }
 
-  protected void construct(WebServerDefinition webServerDefinition, ServletContextHandler applicationContext) {
+  protected void construct(OllieServerDefinition webServerDefinition, ServletContextHandler applicationContext) {
 
     if (webServerDefinition.contextListener() != null) {
       applicationContext.addEventListener(webServerDefinition.contextListener());
@@ -168,5 +167,9 @@ public class WebServer  {
     contextHandler.setHandler(resourceHandler);
     contextHandler.setContextPath(context);
     return contextHandler;
+  }
+
+  public static OllieServerBuilder builder() {
+    return new OllieServerBuilder();
   }
 }
