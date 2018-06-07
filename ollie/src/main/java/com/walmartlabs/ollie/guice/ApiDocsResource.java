@@ -53,8 +53,8 @@ public class ApiDocsResource implements Resource {
         InetAddress ip = null;
         try {
             ip = InetAddress.getLocalHost();
-            if(ip!=null && ip.getHostName()!=null && ip.getHostName().length()!=0 )
-                host = ip.getHostName();
+            if(ip!=null && ip.getHostAddress()!=null && ip.getHostAddress().length()!=0 )
+                host = ip.getHostAddress();
         } catch (UnknownHostException e) {
             logger.error("Failed to get the hostname. Using localhost as hostname for Swagger documentation.", e.getMessage());
         }
