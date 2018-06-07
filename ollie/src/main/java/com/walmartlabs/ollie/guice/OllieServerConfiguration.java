@@ -17,6 +17,7 @@ public class OllieServerConfiguration {
   private String title;
   private String description;
   private String packageToScan;
+  private int port;
   private List<Module> modules;
   private Provider<Realm> realm;
   private List<Class<? extends Realm>> realms;
@@ -29,6 +30,7 @@ public class OllieServerConfiguration {
     this.title = builder.title;
     this.description = builder.description;
     this.packageToScan = builder.packageToScan;
+    this.port = builder.port;
     this.modules = builder.modules;
     this.realm = builder.realm;
     this.realms = builder.realms;
@@ -59,6 +61,10 @@ public class OllieServerConfiguration {
     return packageToScan;
   }
 
+  public int port() {
+      return port;
+  }
+
   public List<Module> modules() {
     return modules;
   }
@@ -86,6 +92,7 @@ public class OllieServerConfiguration {
     private String title;
     private String description;
     private String packageToScan;
+    private int port;
     private List<Module> modules;
     private Provider<Realm> realm;
     private List<Class<? extends Realm>> realms;
@@ -121,6 +128,11 @@ public class OllieServerConfiguration {
     public Builder packageToScan(String packageToScan) {
       this.packageToScan = packageToScan;
       return this;
+    }
+
+    public Builder port(int port){
+        this.port=port;
+        return this;
     }
     
     public Builder modules(List<Module> modules) {

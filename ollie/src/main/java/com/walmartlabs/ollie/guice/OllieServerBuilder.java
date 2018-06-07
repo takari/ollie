@@ -22,8 +22,9 @@ public class OllieServerBuilder extends WebServerBuilder {
   private String api = "/api";
   private String docs = "/docs";
   private String title = "Swagger Console";
+  private int port = 8080;
   private String description = "Swagger Console";
-  private String packageToScan;  
+  private String packageToScan;
   // We need to use Google's Provider because Shiro doesn't use JSR330
   private Provider<Realm> realm;
   private List<Module> modules = Lists.newArrayList();
@@ -40,6 +41,7 @@ public class OllieServerBuilder extends WebServerBuilder {
       .title(title)
       .description(description)
       .packageToScan(packageToScan)
+      .port(this.port)
       .modules(modules)
       .realm(realm)
       .realms(realms)
@@ -61,6 +63,7 @@ public class OllieServerBuilder extends WebServerBuilder {
   }
     
   public OllieServerBuilder port(int port) {
+    this.port=port;
     super.port(port);
     return this;
   }
