@@ -6,7 +6,6 @@ import javax.ws.rs.Path;
 
 import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.guice.aop.ShiroAopModule;
-import org.apache.shiro.guice.web.GuiceShiroFilter;
 import org.apache.shiro.guice.web.ShiroWebModule;
 import org.apache.shiro.realm.Realm;
 import org.slf4j.Logger;
@@ -24,9 +23,10 @@ import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.walmartlabs.ollie.config.ConfigurationModule;
 import com.walmartlabs.ollie.config.ConfigurationProcessor;
-import com.walmartlabs.ollie.config.Environment;
 import com.walmartlabs.ollie.config.EnvironmentSelector;
 import com.walmartlabs.ollie.model.FilterDefinition;
+
+import java.util.Arrays;
 
 public class OllieServletModule extends ServletModule {
 
@@ -59,7 +59,21 @@ public class OllieServletModule extends ServletModule {
     // RESTEasy JAXRS
     install(new ResteasyModule());
     install(new ValidationModule());
-    serve(serverConfiguration.api() + "/*").with(SiestaServlet.class, ImmutableMap.of("resteasy.servlet.mapping.prefix", serverConfiguration.api()));
+
+    String[] apiPatterns = serverConfiguration.apiPatterns();
+    String resteasyPrefix = serverConfiguration.api();
+    if (apiPatterns == null) {
+      apiPatterns = new String[] { serverConfiguration.api() };
+    } else {
+      resteasyPrefix = "/";
+    }
+
+    if (apiPatterns.length == 0) {
+      throw new IllegalArgumentException("'apiPatterns' should contain at least one pattern");
+    }
+
+    String[] morePatterns = apiPatterns.length > 1 ? Arrays.copyOfRange(apiPatterns, 1, apiPatterns.length) : new String[0];
+    serve(apiPatterns[0], morePatterns).with(SiestaServlet.class, ImmutableMap.of("resteasy.servlet.mapping.prefix", resteasyPrefix));
 
     // Configuration: should be moved entirely into the module
     // strategies for determining environment

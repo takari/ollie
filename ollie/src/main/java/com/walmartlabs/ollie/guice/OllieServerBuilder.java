@@ -33,6 +33,8 @@ public class OllieServerBuilder {
   // Security
   private List<Class<? extends Realm>> realms;
   private List<FilterDefinition> filterChains;
+
+  private String[] apiPatterns;
   
   protected OllieServerDefinitionBuilder webServerDefinitionBuilder;
   
@@ -87,7 +89,7 @@ public class OllieServerBuilder {
   public String api() {
     return api;
   }
-  
+
   public OllieServerBuilder docs(String docs) {
     this.docs = docs;
     return this;
@@ -137,6 +139,15 @@ public class OllieServerBuilder {
   
   public List<FilterDefinition> filterChains() {
     return filterChains;
+  }
+
+  public OllieServerBuilder apiPatterns(String... apiPatterns) {
+    this.apiPatterns = apiPatterns;
+    return this;
+  }
+
+  public String[] apiPatterns() {
+    return apiPatterns;
   }
   
   // WebServerBuilder
