@@ -34,9 +34,7 @@ public class OllieServerBuilder {
   private List<Class<? extends Realm>> realms;
   private List<FilterDefinition> filterChains;
 
-  // Resteasy cfg
-  private String resteasyServletPattern;
-  private String resteasyServletPrefix;
+  private String[] apiPatterns;
   
   protected OllieServerDefinitionBuilder webServerDefinitionBuilder;
   
@@ -143,22 +141,13 @@ public class OllieServerBuilder {
     return filterChains;
   }
 
-  public OllieServerBuilder resteasyServletPattern(String resteasyServletPattern) {
-    this.resteasyServletPattern = resteasyServletPattern;
+  public OllieServerBuilder apiPatterns(String... resteasyServletPatterns) {
+    this.apiPatterns = resteasyServletPatterns;
     return this;
   }
 
-  public String resteasyServletPattern() {
-    return resteasyServletPattern;
-  }
-
-  public OllieServerBuilder resteasyServletPrefix(String resteasyServletPrefix) {
-    this.resteasyServletPrefix = resteasyServletPrefix;
-    return this;
-  }
-
-  public String resteasyServletPrefix() {
-    return resteasyServletPrefix;
+  public String[] apiPatterns() {
+    return apiPatterns;
   }
   
   // WebServerBuilder

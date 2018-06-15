@@ -26,6 +26,8 @@ import com.walmartlabs.ollie.config.ConfigurationProcessor;
 import com.walmartlabs.ollie.config.EnvironmentSelector;
 import com.walmartlabs.ollie.model.FilterDefinition;
 
+import java.util.Arrays;
+
 public class OllieServletModule extends ServletModule {
 
   private static Logger logger = LoggerFactory.getLogger(OllieServletModule.class);
@@ -58,17 +60,20 @@ public class OllieServletModule extends ServletModule {
     install(new ResteasyModule());
     install(new ValidationModule());
 
-    String resteasyPattern = serverConfiguration.resteasyServletPattern();
-    if (resteasyPattern == null) {
-      resteasyPattern = serverConfiguration.api();
+    String[] apiPatterns = serverConfiguration.apiPatterns();
+    String resteasyPrefix = serverConfiguration.api();
+    if (apiPatterns == null) {
+      apiPatterns = new String[] { serverConfiguration.api() };
+    } else {
+      resteasyPrefix = "/";
     }
 
-    String resteasyPrefix = serverConfiguration.resteasyServletPrefix();
-    if (resteasyPrefix == null) {
-      resteasyPrefix = serverConfiguration.api();
+    if (apiPatterns.length == 0) {
+      throw new IllegalArgumentException("'apiPatterns' should contain at least one pattern");
     }
 
-    serve(resteasyPattern).with(SiestaServlet.class, ImmutableMap.of("resteasy.servlet.mapping.prefix", resteasyPrefix));
+    String[] morePatterns = apiPatterns.length > 1 ? Arrays.copyOfRange(apiPatterns, 1, apiPatterns.length) : new String[0];
+    serve(apiPatterns[0], morePatterns).with(SiestaServlet.class, ImmutableMap.of("resteasy.servlet.mapping.prefix", resteasyPrefix));
 
     // Configuration: should be moved entirely into the module
     // strategies for determining environment
