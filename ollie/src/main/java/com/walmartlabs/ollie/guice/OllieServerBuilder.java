@@ -141,8 +141,8 @@ public class OllieServerBuilder {
     return filterChains;
   }
 
-  public OllieServerBuilder apiPatterns(String... resteasyServletPatterns) {
-    this.apiPatterns = resteasyServletPatterns;
+  public OllieServerBuilder apiPatterns(String... apiPatterns) {
+    this.apiPatterns = apiPatterns;
     return this;
   }
 
