@@ -6,7 +6,6 @@ import javax.ws.rs.Path;
 
 import org.apache.shiro.aop.AnnotationResolver;
 import org.apache.shiro.guice.aop.ShiroAopModule;
-import org.apache.shiro.guice.web.GuiceShiroFilter;
 import org.apache.shiro.guice.web.ShiroWebModule;
 import org.apache.shiro.realm.Realm;
 import org.slf4j.Logger;
@@ -24,7 +23,6 @@ import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.walmartlabs.ollie.config.ConfigurationModule;
 import com.walmartlabs.ollie.config.ConfigurationProcessor;
-import com.walmartlabs.ollie.config.Environment;
 import com.walmartlabs.ollie.config.EnvironmentSelector;
 import com.walmartlabs.ollie.model.FilterDefinition;
 
@@ -59,7 +57,18 @@ public class OllieServletModule extends ServletModule {
     // RESTEasy JAXRS
     install(new ResteasyModule());
     install(new ValidationModule());
-    serve(serverConfiguration.api() + "/*").with(SiestaServlet.class, ImmutableMap.of("resteasy.servlet.mapping.prefix", serverConfiguration.api()));
+
+    String resteasyPattern = serverConfiguration.resteasyServletPattern();
+    if (resteasyPattern == null) {
+      resteasyPattern = serverConfiguration.api();
+    }
+
+    String resteasyPrefix = serverConfiguration.resteasyServletPrefix();
+    if (resteasyPrefix == null) {
+      resteasyPrefix = serverConfiguration.api();
+    }
+
+    serve(resteasyPattern).with(SiestaServlet.class, ImmutableMap.of("resteasy.servlet.mapping.prefix", resteasyPrefix));
 
     // Configuration: should be moved entirely into the module
     // strategies for determining environment
