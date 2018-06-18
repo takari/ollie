@@ -39,15 +39,17 @@ public class ConfigurationProcessor {
   }
 
   public com.typesafe.config.Config process() {
-    String configurationName;
+    Config configuration;
     if (System.getProperty(CONFIG_FILE) != null) {
-      configurationName = System.getProperty(CONFIG_FILE);
+      String p = System.getProperty(CONFIG_FILE);
+      logger.info("Processing configuration file {}", p);
+      configuration = ConfigFactory.parseFile(new File(p), ConfigParseOptions.defaults());
     } else {
-      configurationName = name + ".conf";
+      String configurationName = name + ".conf";
+      logger.info("Processing configuration resource {}", configurationName);
+      configuration = ConfigFactory.load(configurationName, ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem());
     }
-    logger.info("Processing configuration resource {}", configurationName);        
-    
-    Config configuration = ConfigFactory.load(configurationName, ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem());
+
     Config applicationConfiguration = configuration.getConfig(name);
     Config environmentConfiguration = applicationConfiguration.getConfig(environment.id());
     Config result = environmentConfiguration.withFallback(applicationConfiguration);

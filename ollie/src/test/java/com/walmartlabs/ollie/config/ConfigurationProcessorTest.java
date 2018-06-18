@@ -34,7 +34,7 @@ public class ConfigurationProcessorTest {
 
   @Test
   public void validateConfigurationProcessorWhereConfigurationFileIsOverridenWithASystemProperty() {
-    System.setProperty(ConfigurationProcessor.CONFIG_FILE, "different.conf");
+    System.setProperty(ConfigurationProcessor.CONFIG_FILE, "src/test/resources/different.conf");
     ConfigurationProcessor processor = new ConfigurationProcessor("gatekeeper");
     com.typesafe.config.Config config = processor.process();
     assertEquals("for different folks", config.getString("different-strokes"));    
