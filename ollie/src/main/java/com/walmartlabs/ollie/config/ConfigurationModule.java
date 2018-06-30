@@ -1,5 +1,6 @@
 package com.walmartlabs.ollie.config;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -13,6 +14,9 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import com.google.inject.*;
+import com.google.inject.Module;
+import com.typesafe.config.*;
 import org.reflections.Reflections;
 import org.reflections.scanners.FieldAnnotationsScanner;
 import org.reflections.scanners.MethodAnnotationsScanner;
@@ -22,16 +26,6 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
-import com.google.inject.Key;
-import com.google.inject.Module;
-//import com.typesafe.config.Config;
-import com.typesafe.config.ConfigBeanFactory;
-import com.typesafe.config.ConfigObject;
-import com.typesafe.config.ConfigValue;
-import com.typesafe.config.ConfigValueType;
-
 /**
  * Include this {@link Module} in your {@link Guice} bootstrapping to Automagically
  * get bindings to your {@link Config} annotated configuration parameters.
@@ -39,6 +33,8 @@ import com.typesafe.config.ConfigValueType;
  * @author jason
  */
 public class ConfigurationModule extends AbstractModule {
+
+  private static final Provider<Object> NULL_PROVIDER = () -> null;
 
   private final com.typesafe.config.Config config;
   private final Reflections reflections;
@@ -90,7 +86,7 @@ public class ConfigurationModule extends AbstractModule {
     Set<Field> annotatedFields = reflections.getFieldsAnnotatedWith(Config.class);
     for (Field f : annotatedFields) {
       Config annotation = f.getAnnotation(Config.class);
-      bindValue(f.getType(), f.getAnnotatedType().getType(), annotation);
+      bindValue(f.getType(), f.getAnnotatedType().getType(), annotation, isNullable(f.getAnnotations()));
     }
   }
 
@@ -98,28 +94,40 @@ public class ConfigurationModule extends AbstractModule {
     for (Parameter p : params) {
       if (p.isAnnotationPresent(Config.class)) {
         Config annotation = p.getAnnotation(Config.class);
-        bindValue(p.getType(), p.getAnnotatedType().getType(), annotation);
+        bindValue(p.getType(), p.getAnnotatedType().getType(), annotation, isNullable(p.getAnnotations()));
       }
     }
   }
 
-  private void bindValue(Class<?> paramClass, Type paramType, Config annotation) {
+  private void bindValue(Class<?> paramClass, Type paramType, Config annotation, boolean nullable) {
     // Prevents multiple bindings on the same annotation
     if (!boundAnnotations.contains(annotation)) {
       @SuppressWarnings("unchecked")
       Key<Object> key = (Key<Object>) Key.get(paramType, annotation);
       String configPath = annotation.value();
-      Object configValue = getConfigValue(paramClass, paramType, configPath);
-      bind(key).toInstance(configValue);
+      Object configValue = getConfigValue(paramClass, paramType, configPath, nullable);
+      if (configValue == null) {
+        if (nullable) {
+          bind(key).toProvider(NULL_PROVIDER);
+        } else {
+          throw new ConfigException.Missing(configPath);
+        }
+      } else {
+        bind(key).toInstance(configValue);
+      }
       boundAnnotations.add(annotation);
     }
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})
-  private Object getConfigValue(Class<?> paramClass, Type paramType, String path) {
+  private Object getConfigValue(Class<?> paramClass, Type paramType, String path, boolean nullable) {
     Optional<Object> extractedValue = ConfigExtractors.extractConfigValue(config, paramClass, path);
     if (extractedValue.isPresent()) {
       return extractedValue.get();
+    }
+
+    if (nullable && !config.hasPath(path)) {
+      return null;
     }
 
     ConfigValue configValue = config.getValue(path);
@@ -128,8 +136,7 @@ public class ConfigurationModule extends AbstractModule {
       ConfigObject object = config.getObject(path);
       return object.unwrapped();
     } else if (valueType.equals(ConfigValueType.OBJECT)) {
-      Object bean = ConfigBeanFactory.create(config.getConfig(path), paramClass);
-      return bean;
+      return ConfigBeanFactory.create(config.getConfig(path), paramClass);
     } else if (valueType.equals(ConfigValueType.LIST) && List.class.isAssignableFrom(paramClass)) {
       Type listType = ((ParameterizedType) paramType).getActualTypeArguments()[0];
 
@@ -141,14 +148,26 @@ public class ConfigurationModule extends AbstractModule {
       } else {
         List<? extends com.typesafe.config.Config> configList = config.getConfigList(path);
         return configList.stream()
-          .map(cfg -> {
-            Object created = ConfigBeanFactory.create(cfg, (Class) listType);
-            return created;
-          })
+          .map(cfg -> ConfigBeanFactory.create(cfg, (Class) listType))
           .collect(Collectors.toList());
       }
     }
 
     throw new RuntimeException("Cannot obtain config value for " + paramType + " at path: " + path);
+  }
+
+  private static boolean isNullable(Annotation[] annotations) {
+    if (annotations == null || annotations.length == 0) {
+      return false;
+    }
+
+    for (Annotation a : annotations) {
+      // support any @Nullable - sisu, intellij, etc
+      if ("Nullable".equals(a.annotationType().getSimpleName())) {
+        return true;
+      }
+    }
+
+    return false;
   }
 }
