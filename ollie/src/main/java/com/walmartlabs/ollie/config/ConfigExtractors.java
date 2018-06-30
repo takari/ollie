@@ -135,7 +135,7 @@ enum ConfigExtractors implements ConfigExtractor {
    * @return the extracted config value, or empty if there was no matching {@link ConfigExtractor}.
    */
   static Optional<Object> extractConfigValue(Config config, Class<?> paramClass, String path) {
-    if (EXTRACTOR_MAP.containsKey(paramClass)) {
+    if (config.hasPath(path) && EXTRACTOR_MAP.containsKey(paramClass)) {
       return Optional.of(EXTRACTOR_MAP.get(paramClass).extractValue(config, path));
     } else {
       return Optional.empty();

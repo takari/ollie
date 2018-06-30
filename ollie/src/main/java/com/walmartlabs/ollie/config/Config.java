@@ -23,6 +23,5 @@ public @interface Config {
   /**
    * @return the {@link Config} path to the configuration value.
    */
-  public String value();
-
+  String value();
 }
