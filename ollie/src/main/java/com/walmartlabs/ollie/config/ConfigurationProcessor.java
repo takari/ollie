@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigException;
 import com.typesafe.config.ConfigFactory;
-import com.typesafe.config.ConfigParseOptions;
-import com.typesafe.config.ConfigResolveOptions;
 
 public class ConfigurationProcessor {
 
@@ -43,11 +41,11 @@ public class ConfigurationProcessor {
     if (System.getProperty(CONFIG_FILE) != null) {
       String p = System.getProperty(CONFIG_FILE);
       logger.info("Processing configuration file {}", p);
-      configuration = ConfigFactory.parseFile(new File(p), ConfigParseOptions.defaults());
+      configuration = ConfigFactory.parseFile(new File(p));
     } else {
       String configurationName = name + ".conf";
       logger.info("Processing configuration resource {}", configurationName);
-      configuration = ConfigFactory.load(configurationName, ConfigParseOptions.defaults(), ConfigResolveOptions.noSystem());
+      configuration = ConfigFactory.load(configurationName);
     }
 
     Config applicationConfiguration = configuration.getConfig(name);
