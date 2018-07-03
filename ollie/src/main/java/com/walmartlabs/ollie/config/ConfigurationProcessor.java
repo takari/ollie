@@ -37,20 +37,21 @@ public class ConfigurationProcessor {
   }
 
   public com.typesafe.config.Config process() {
-    Config configuration;
-    if (System.getProperty(CONFIG_FILE) != null) {
-      String p = System.getProperty(CONFIG_FILE);
-      logger.info("Processing configuration file {}", p);
-      configuration = ConfigFactory.parseFile(new File(p));
-    } else {
-      String configurationName = name + ".conf";
-      logger.info("Processing configuration resource {}", configurationName);
-      configuration = ConfigFactory.load(configurationName);
-    }
+    String configurationName = name + ".conf";
+    logger.info("Processing configuration resource {}", configurationName);
+    Config configuration = ConfigFactory.load(configurationName);
 
     Config applicationConfiguration = configuration.getConfig(name);
     Config environmentConfiguration = applicationConfiguration.getConfig(environment.id());
     Config result = environmentConfiguration.withFallback(applicationConfiguration);
+
+    if (System.getProperty(CONFIG_FILE) != null) {
+      String p = System.getProperty(CONFIG_FILE);
+      logger.info("Processing configuration file {}", p);
+      Config externalConfiguration = ConfigFactory.parseFile(new File(p));
+      result = externalConfiguration.withFallback(result);
+    }
+
     //
     // For development we want an easy way to plug in values without having to modify resources
     // in source control. Developers can define configuration outside of source control and have
