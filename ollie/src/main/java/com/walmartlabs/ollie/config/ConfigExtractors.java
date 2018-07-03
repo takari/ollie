@@ -1,5 +1,7 @@
 package com.walmartlabs.ollie.config;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,6 +66,12 @@ enum ConfigExtractors implements ConfigExtractor {
     @Override
     public Object extractValue(Config config, String path) {
       return config.getString(path);
+    }
+  },
+  PATH(Path.class) {
+    @Override
+    public Object extractValue(Config config, String path) {
+      return Paths.get(config.getString(path));
     }
   },
   ANY_REF(Object.class) {
