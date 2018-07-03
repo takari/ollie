@@ -41,16 +41,17 @@ public class ConfigurationProcessor {
     logger.info("Processing configuration resource {}", configurationName);
     Config configuration = ConfigFactory.load(configurationName);
 
-    Config applicationConfiguration = configuration.getConfig(name);
-    Config environmentConfiguration = applicationConfiguration.getConfig(environment.id());
-    Config result = environmentConfiguration.withFallback(applicationConfiguration);
+    Config result = configuration.getConfig(name);
 
     if (System.getProperty(CONFIG_FILE) != null) {
       String p = System.getProperty(CONFIG_FILE);
       logger.info("Processing configuration file {}", p);
-      Config externalConfiguration = ConfigFactory.parseFile(new File(p));
+      Config externalConfiguration = ConfigFactory.parseFile(new File(p)).getConfig(name);
       result = externalConfiguration.withFallback(result);
     }
+
+    Config environmentConfiguration = result.getConfig(environment.id());
+    result = environmentConfiguration.withFallback(result);
 
     //
     // For development we want an easy way to plug in values without having to modify resources
