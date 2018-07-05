@@ -1,17 +1,15 @@
 package com.walmartlabs.ollie.config;
 
+import com.typesafe.config.Config;
+import com.typesafe.config.*;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigList;
-import com.typesafe.config.ConfigMemorySize;
-import com.typesafe.config.ConfigObject;
-import com.typesafe.config.ConfigValue;
 
 /**
  * An {@link Enum} of {@link ConfigExtractor}s to extract values out of a {@link Config}.
@@ -114,6 +112,12 @@ enum ConfigExtractors implements ConfigExtractor {
     @Override
     public Object extractValue(Config config, String path) {
       return config.getMemorySize(path);
+    }
+  },
+  BYTE_ARRAY(byte[].class) {
+    @Override
+    public Object extractValue(Config config, String path) {
+      return Base64.getDecoder().decode(config.getString(path));
     }
   };
 
