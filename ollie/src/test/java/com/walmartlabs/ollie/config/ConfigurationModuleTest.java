@@ -20,7 +20,7 @@ import com.google.inject.Singleton;
 import com.typesafe.config.ConfigFactory;
 import com.typesafe.config.ConfigMemorySize;
 import com.walmartlabs.ollie.config.Config;
-import com.walmartlabs.ollie.config.ConfigurationModule;
+import com.walmartlabs.ollie.config.OllieConfigurationModule;
 import com.walmartlabs.ollie.config.test.ConstructorInjectedPojo;
 import com.walmartlabs.ollie.config.test.FieldInjectedPojo;
 import com.walmartlabs.ollie.config.test.MethodInjectedPojo;
@@ -72,9 +72,7 @@ public class ConfigurationModuleTest {
       }
     };
 
-    injector = Guice.createInjector(
-      ConfigurationModule.fromConfigWithPackage(testConf, "com.walmartlabs.ollie.config"),
-      testModule);
+    injector = Guice.createInjector(new OllieConfigurationModule("com.walmartlabs.ollie.config", testConf), testModule);
   }
 
   @Test

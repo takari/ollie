@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>com.walmartlabs.ollie</groupId>
@@ -20,7 +22,8 @@
     <resteasy.version>3.1.4.Final</resteasy.version>
     <swagger.version>1.5.16</swagger.version>
     <jackson.version>2.8.2</jackson.version>
-    <okhttp.version>3.9.1</okhttp.version>
+    <okhttp.version>3.10.0</okhttp.version>
+    <airlift.version>0.171</airlift.version>
   </properties>
 
   <dependencyManagement>
@@ -29,11 +32,6 @@
         <groupId>com.walmartlabs.ollie</groupId>
         <artifactId>ollie</artifactId>
         <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.squareup.okhttp3</groupId>
-        <artifactId>okhttp</artifactId>
-        <version>${okhttp.version}</version>
       </dependency>
       <dependency>
         <groupId>org.slf4j</groupId>
@@ -114,6 +112,11 @@
       <dependency>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-deploy</artifactId>
+        <version>${jetty.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.eclipse.jetty</groupId>
+        <artifactId>jetty-client</artifactId>
         <version>${jetty.version}</version>
       </dependency>
       <!-- JAXRS features -->
@@ -219,10 +222,46 @@
         <artifactId>reflections</artifactId>
         <version>0.9.11</version>
       </dependency>
+      <!-- Airflift -->
+      <dependency>
+        <groupId>io.airlift</groupId>
+        <artifactId>security</artifactId>
+        <version>${airlift.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.airlift</groupId>
+        <artifactId>http-client</artifactId>
+        <version>${airlift.version}</version>
+      </dependency>
+      <!-- OkHttp -->
+      <dependency>
+        <groupId>com.squareup.okhttp3</groupId>
+        <artifactId>okhttp</artifactId>
+        <version>${okhttp.version}</version>
+      </dependency>
+      <!-- Testing -->
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
         <version>4.12</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-core</artifactId>
+        <version>1.3</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.hamcrest</groupId>
+        <artifactId>hamcrest-library</artifactId>
+        <version>1.3</version>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>io.rest-assured</groupId>
+        <artifactId>rest-assured</artifactId>
+        <version>3.1.0</version>
         <scope>test</scope>
       </dependency>
     </dependencies>

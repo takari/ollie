@@ -7,4 +7,8 @@ For now, we just have an ObjectMapper that works better with Swagger but we shou
 - swagger
 - configuration management
 
+# SSL
+https://www.ssl.com/article/ssl-tls-handshake-overview/
+http://www.tldp.org/HOWTO/SSL-Certificates-HOWTO/x64.html
+
 [1]: https://stackoverflow.com/questions/24489186/customize-json-serialization-with-jaxrs

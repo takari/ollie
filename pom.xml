@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>io.takari</groupId>
@@ -11,6 +13,16 @@
   <version>0.0.19-SNAPSHOT</version>
   <name>Ollie :: Parent</name>
   <packaging>pom</packaging>
+
+  <properties>
+    <!-- Takari Lifecycle -->
+    <takari.javaSourceVersion>1.8</takari.javaSourceVersion>
+    <maven.compiler.source>${takari.javaSourceVersion}</maven.compiler.source>
+    <maven.compiler.target>${takari.javaSourceVersion}</maven.compiler.target>
+    <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
   <modules>
     <module>ollie</module>
     <module>ollie-targetplatform</module>

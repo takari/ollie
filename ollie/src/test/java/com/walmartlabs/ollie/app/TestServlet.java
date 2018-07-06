@@ -3,30 +3,40 @@ package com.walmartlabs.ollie.app;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import javax.inject.Named;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.jetty.servlet.DefaultServlet;
+//
+// What we have commented out is the way we would ideally like servlets to work. Using dependency injection
+// and getting configuration from our own mechanism instead of init parameters.
+//
+//@Named
+//@Singleton
+public class TestServlet extends HttpServlet {
 
-import com.google.inject.Singleton;
-import com.walmartlabs.ollie.config.Config;
+  private /*final*/ String stringConfig;
 
-@Named
-@Singleton
-public class TestServlet extends DefaultServlet {
+  /*
+  @Inject
+  public TestServlet(
+    @Config("servlet.config.string") String stringConfig, TestComponent component) {    
+    this.stringConfig = stringConfig;
+  }
+  */
 
-  private final String name;
-  
-  public TestServlet(@Config("name") String name) {
-    this.name = name;
+  @Override
+  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    try (PrintWriter out = response.getWriter()) {
+      out.write(stringConfig);
+    }
   }
   
   @Override
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-    try(PrintWriter out = response.getWriter()) {
-      out.write(String.format("Hello %s.", name));
-    }
+  public void init(ServletConfig config) throws ServletException {
+    String stringConfig = config.getInitParameter("servlet.config.string");
+    this.stringConfig = stringConfig;
   }
 }

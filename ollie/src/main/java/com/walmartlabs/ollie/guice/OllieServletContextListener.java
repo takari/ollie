@@ -10,6 +10,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.google.inject.servlet.GuiceServletContextListener;
+import com.walmartlabs.ollie.OllieServerBuilder;
+
 import org.eclipse.sisu.space.BeanScanning;
 import org.eclipse.sisu.space.SpaceModule;
 import org.eclipse.sisu.space.URLClassSpace;
@@ -72,6 +74,7 @@ public class OllieServletContextListener
     return Guice.createInjector(new WireModule(modules));
   }
 
+  // TODO, these all needs to go within the space module
   protected void configureModules(final List<Module> modules) {
     modules.add(new SpaceModule(new URLClassSpace(getClass().getClassLoader()), BeanScanning.CACHE));
     modules.add(new OllieServletModule(config));
