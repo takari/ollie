@@ -31,6 +31,8 @@ public class ProvidedPojo implements TestPojo {
   private final Map<String, Integer> testMap;
   private final Map<Integer, String> testMapIntkey;
   private final NestedPojo testNestedPojo;
+  private final String nullValue;
+  private final String missingValue;
 
   public ProvidedPojo(
     boolean testBoolean,
@@ -53,7 +55,10 @@ public class ProvidedPojo implements TestPojo {
     ConfigMemorySize testSize,
     Map<String, Integer> testMap,
     Map<Integer, String> testMapIntkey,
-    NestedPojo testNestedPojo) {
+    NestedPojo testNestedPojo,
+    String nullValue,
+    String missingValue) {
+
     this.testBoolean = testBoolean;
     this.testYesBoolean = testYesBoolean;
     this.testLong = testLong;
@@ -75,6 +80,8 @@ public class ProvidedPojo implements TestPojo {
     this.testMap = testMap;
     this.testMapIntkey = testMapIntkey;
     this.testNestedPojo = testNestedPojo;
+    this.nullValue = nullValue;
+    this.missingValue = missingValue;
   }
 
   public boolean isTestBoolean() {
@@ -159,5 +166,13 @@ public class ProvidedPojo implements TestPojo {
 
   public NestedPojo getTestNestedPojo() {
     return testNestedPojo;
+  }
+
+  public String getNullValue() {
+    return nullValue;
+  }
+
+  public String getMissingValue() {
+    return missingValue;
   }
 }

@@ -49,4 +49,8 @@ public interface TestPojo {
   public Map<Integer, String> getTestMapIntkey();
 
   public NestedPojo getTestNestedPojo();
+
+  public String getNullValue();
+
+  public String getMissingValue();
 }

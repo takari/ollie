@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.typesafe.config.ConfigMemorySize;
 import com.walmartlabs.ollie.config.Config;
+import org.eclipse.sisu.Nullable;
 
 @Singleton
 public class FieldInjectedPojo implements TestPojo {
@@ -75,6 +76,14 @@ public class FieldInjectedPojo implements TestPojo {
   @Inject
   @Config("field.nested")
   NestedPojo testNestedPojo;
+  @Inject
+  @Config("field.nullValue")
+  @Nullable
+  String nullValue;
+  @Inject
+  @Config("field.missingValue")
+  @Nullable
+  String missingValue;
 
   public void setTestBoolean(boolean testBoolean) {
     this.testBoolean = testBoolean;
@@ -162,5 +171,13 @@ public class FieldInjectedPojo implements TestPojo {
 
   public NestedPojo getTestNestedPojo() {
     return testNestedPojo;
+  }
+
+  public String getNullValue() {
+    return nullValue;
+  }
+
+  public String getMissingValue() {
+    return missingValue;
   }
 }

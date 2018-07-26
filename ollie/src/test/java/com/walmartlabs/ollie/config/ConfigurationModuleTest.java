@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.sisu.Nullable;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,9 +67,12 @@ public class ConfigurationModuleTest {
         @Config("provided.size") ConfigMemorySize testSize,
         @Config("provided.map") Map<String, Integer> testMap,
         @Config("provided.map.intkey") Map<Integer, String> testMapIntkey,
-        @Config("provided.nested") NestedPojo testNestedPojo) {
+        @Config("provided.nested") NestedPojo testNestedPojo,
+        @Config("provided.nullValue") @Nullable String testNullValue,
+        @Config("provided.missingValue") @Nullable String testMissingValue) {
         return new ProvidedPojo(testBoolean, testYesBoolean, testLong, testByte, testInt, testDouble, testFloat, testString, testListOfBoolean, testListOfInteger, testListOfDouble, testListOfLong,
-          testListOfString, testListOfDuration, testListOfSize, testListOfNested, testDuration, testSize, testMap, testMapIntkey, testNestedPojo);
+          testListOfString, testListOfDuration, testListOfSize, testListOfNested, testDuration, testSize, testMap, testMapIntkey, testNestedPojo,
+          testNullValue, testMissingValue);
       }
     };
 
@@ -127,5 +131,8 @@ public class ConfigurationModuleTest {
     Assert.assertEquals(Arrays.asList("a", "b", "c"), pojo.getTestListOfString());
     Assert.assertEquals(Arrays.asList(Duration.of(1, ChronoUnit.SECONDS), Duration.of(2, ChronoUnit.SECONDS), Duration.of(3, ChronoUnit.SECONDS)), pojo.getTestListOfDuration());
     Assert.assertEquals(Arrays.asList(ConfigMemorySize.ofBytes(524288), ConfigMemorySize.ofBytes(1048576), ConfigMemorySize.ofBytes(1073741824)), pojo.getTestListOfSize());
+
+    Assert.assertNull(pojo.getNullValue());
+    Assert.assertNull(pojo.getMissingValue());
   }
 }

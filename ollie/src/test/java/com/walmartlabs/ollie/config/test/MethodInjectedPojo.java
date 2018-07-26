@@ -33,6 +33,8 @@ public class MethodInjectedPojo implements TestPojo {
   private Map<String, Integer> testMap;
   private Map<Integer, String> testMapIntkey;
   private NestedPojo testNestedPojo;
+  private String nullValue;
+  private String missingValue;
 
   @Inject
   public void setTestYesBoolean(@Config("method.boolean") boolean testYesBoolean) {
@@ -221,5 +223,21 @@ public class MethodInjectedPojo implements TestPojo {
 
   public NestedPojo getTestNestedPojo() {
     return testNestedPojo;
+  }
+
+  public String getNullValue() {
+    return nullValue;
+  }
+
+  public void setNullValue(String nullValue) {
+    this.nullValue = nullValue;
+  }
+
+  public String getMissingValue() {
+    return missingValue;
+  }
+
+  public void setMissingValue(String missingValue) {
+    this.missingValue = missingValue;
   }
 }

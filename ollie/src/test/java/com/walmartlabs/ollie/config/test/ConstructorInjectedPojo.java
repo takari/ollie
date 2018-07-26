@@ -8,6 +8,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.typesafe.config.ConfigMemorySize;
 import com.walmartlabs.ollie.config.Config;
+import org.eclipse.sisu.Nullable;
 
 @Singleton
 public class ConstructorInjectedPojo implements TestPojo {
@@ -33,6 +34,8 @@ public class ConstructorInjectedPojo implements TestPojo {
   private final Map<String, Integer> testMap;
   private final Map<Integer, String> testMapIntkey;
   private final NestedPojo testNestedPojo;
+  private final String nullValue;
+  private final String missingValue;
 
   @Inject
   public ConstructorInjectedPojo(
@@ -57,7 +60,9 @@ public class ConstructorInjectedPojo implements TestPojo {
     @Config("constructor.size") ConfigMemorySize testSize,
     @Config("constructor.map") Map<String, Integer> testMap,
     @Config("constructor.map.intkey") Map<Integer, String> testMapIntkey,
-    @Config("constructor.nested") NestedPojo testNestedPojo) {
+    @Config("constructor.nested") NestedPojo testNestedPojo,
+    @Config("constructor.nullValue") @Nullable String testNullValue,
+    @Config("constructor.missingValue") @Nullable String testMissingValue) {
     this.testBoolean = testBoolean;
     this.testYesBoolean = testYesBoolean;
     this.testLong = testLong;
@@ -79,6 +84,8 @@ public class ConstructorInjectedPojo implements TestPojo {
     this.testMap = testMap;
     this.testMapIntkey = testMapIntkey;
     this.testNestedPojo = testNestedPojo;
+    this.nullValue = testNullValue;
+    this.missingValue = testMissingValue;
   }
 
   public boolean isTestBoolean() {
@@ -163,5 +170,15 @@ public class ConstructorInjectedPojo implements TestPojo {
 
   public NestedPojo getTestNestedPojo() {
     return testNestedPojo;
+  }
+
+  @Override
+  public String getNullValue() {
+    return nullValue;
+  }
+
+  @Override
+  public String getMissingValue() {
+    return missingValue;
   }
 }
