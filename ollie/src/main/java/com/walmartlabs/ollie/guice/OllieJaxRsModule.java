@@ -22,14 +22,15 @@ public class OllieJaxRsModule extends AbstractModule {
 
   private final static Logger logger = LoggerFactory.getLogger(OllieJaxRsModule.class);
   private final OllieServerBuilder serverConfiguration;
-  private String[] apiPatterns;
+  private String apiPattern;
   private String[] morePatterns;
   private final Map<String, String> parameters;
 
   public OllieJaxRsModule(OllieServerBuilder serverConfiguration) {
     this.serverConfiguration = serverConfiguration;
-    apiPatterns = serverConfiguration.apiPatterns();
+
     String resteasyPrefix = serverConfiguration.api();
+    String[] apiPatterns = serverConfiguration.apiPatterns();
     if (apiPatterns == null) {
       apiPatterns = new String[] {serverConfiguration.api()};
     } else {
@@ -39,12 +40,14 @@ public class OllieJaxRsModule extends AbstractModule {
     if (apiPatterns.length == 0) {
       throw new IllegalArgumentException("'apiPatterns' should contain at least one pattern");
     }
-    morePatterns = apiPatterns.length > 1 ? Arrays.copyOfRange(apiPatterns, 1, apiPatterns.length) : new String[0];
-    parameters = ImmutableMap.of("resteasy.servlet.mapping.prefix", resteasyPrefix);
+
+    this.apiPattern = apiPatterns[0];
+    this.morePatterns = apiPatterns.length > 1 ? Arrays.copyOfRange(apiPatterns, 1, apiPatterns.length) : new String[0];
+    this.parameters = ImmutableMap.of("resteasy.servlet.mapping.prefix", resteasyPrefix);
   }
 
-  public String[] apiPatterns() {
-    return apiPatterns;
+  public String apiPattern() {
+    return apiPattern;
   }
   
   public String[] morePatterns() {
