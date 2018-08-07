@@ -6,12 +6,14 @@ public class TestEntity {
   private final String stringConfig;
   private final int integerConfig;
   private final float floatConfig;
+  private final String jiraPassword;
 
-  public TestEntity(String name, String stringConfig, int integerConfig, float floatConfig) {
+  public TestEntity(String name, String stringConfig, int integerConfig, float floatConfig, String jiraPassword) {
     this.name = name;
     this.stringConfig = stringConfig;
     this.integerConfig = integerConfig;
     this.floatConfig = floatConfig;
+    this.jiraPassword = jiraPassword;
   }
 
   public String getName() {
@@ -28,5 +30,9 @@ public class TestEntity {
 
   public float getFloatConfig() {
     return floatConfig;
+  }
+
+  public String getJiraPassword() {
+    return jiraPassword;
   }
 }

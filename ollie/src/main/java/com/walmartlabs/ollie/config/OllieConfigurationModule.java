@@ -70,8 +70,7 @@ public class OllieConfigurationModule extends AbstractModule {
   public OllieConfigurationModule(OllieServerBuilder config) {
     this(
       config.packageToScan(),
-      new ConfigurationProcessor(config.name(),
-        new EnvironmentSelector().select()).process());
+      new ConfigurationProcessor(config.name(), new EnvironmentSelector().select(), null, config.secrets()).process());
   }
 
   @SuppressWarnings({"rawtypes"})

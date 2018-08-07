@@ -27,6 +27,7 @@ public class TestResource
   private final String stringConfig;
   private final int integerConfig;
   private final float floatConfig;
+  private final String jiraPassword;
 
   @Inject
   public TestResource(
@@ -34,17 +35,19 @@ public class TestResource
     //      what's happening during the test.
     @Config("resource.config.string") String stringConfig,
     @Config("resource.config.integer") int integerConfig,
-    @Config("resource.config.float") float floatConfig) {
+    @Config("resource.config.float") float floatConfig,
+    @Config("jira.password") String jiraPassword) {
 
     this.stringConfig = stringConfig;
     this.integerConfig = integerConfig;
     this.floatConfig = floatConfig;
+    this.jiraPassword = jiraPassword;
   }
 
   @GET
   @Produces(APPLICATION_JSON)
   @ApiOperation(value = "Test Resource")
   public TestEntity ping(final @QueryParam("name") String name) {
-    return new TestEntity(name, stringConfig, integerConfig, floatConfig);
+    return new TestEntity(name, stringConfig, integerConfig, floatConfig, jiraPassword);
   }
 }

@@ -63,7 +63,9 @@ public class OllieServerBuilder {
   List<String> excludedCipherSuites = ImmutableList.of();                                                                                                                                                                                                                                                                   
   double sslSessionTimeout = TimeUnit.SECONDS.convert(4, TimeUnit.HOURS);                                                                                                   
   int sslSessionCacheSize = 10_000;                       
-  
+  // Secrets
+  File secrets;
+
   public OllieServer build() {           
     this.contextListener  = new OllieServletContextListener(this);
     filter("/*").through(CrossOriginFilter.class);
@@ -290,5 +292,14 @@ public class OllieServerBuilder {
     }
     staticContentDefinitions.add(staticContentDefinition);
     return this;
-  }  
+  }
+
+  public OllieServerBuilder secrets(File secrets) {
+    this.secrets = secrets;
+    return this;
+  }
+
+  public File secrets() {
+    return secrets;
+  }
 }

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.File;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -81,5 +82,15 @@ public class ConfigurationProcessorTest {
     exception.expect(RuntimeException.class);
     exception.expectMessage(containsString("The specified environment 'development' is not present"));
     processor.process();
-  }      
+  }
+
+  @Test
+  public void validateConfigurationProcessorUsingWithSecrets() {
+    File secretsProperties = new File(basedir, "src/test/resources/secrets.properties");
+    ConfigurationProcessor processor = new ConfigurationProcessor("secrets", Environment.DEVELOPMENT, null, secretsProperties);
+    com.typesafe.config.Config config = processor.process();
+    assertEquals("secretValue0", config.getString("secretKey0"));
+    assertEquals("super-secret", config.getString("jira.password"));
+  }
 }
+
