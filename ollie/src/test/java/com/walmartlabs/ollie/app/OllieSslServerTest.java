@@ -23,9 +23,11 @@ import io.airlift.http.client.jetty.JettyHttpClient;
 
 public class OllieSslServerTest {
 
+  protected OllieServer server;
+
   @Test
   public void validate() throws Exception {
-    OllieServer server = server();
+    server = server();
     HttpClientConfig clientConfig = new HttpClientConfig()
       .setKeyStorePath(getResource("clientcert-pem/client.pem").getPath())
       .setKeyStorePassword("ollie")
@@ -36,8 +38,8 @@ public class OllieSslServerTest {
 
   protected static OllieServer server() {
     OllieServer server = OllieServer.builder()
-      .port(9000)
-      .name("testserver")
+      .port(0)
+      .name("testsslserver")
       .sslEnabled(true)
       .keystorePath(getResource("clientcert-pem/server.pem").getPath())
       .keystorePassword("ollie")
@@ -50,7 +52,8 @@ public class OllieSslServerTest {
   }
 
   protected String url(String path) {
-    return String.format("https://localhost:9000%s", path);
+    int port = server.port();
+    return String.format("https://localhost:%s%s", port, path);
   }  
 
   // https://stackoverflow.com/questions/24351472/getattributejavax-servlet-request-x509certificate-not-set-spring-cxf-jettaay

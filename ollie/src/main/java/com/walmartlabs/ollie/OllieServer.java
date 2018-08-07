@@ -316,6 +316,10 @@ public class OllieServer {
     }
   }
 
+  public int port() {
+    return ((ServerConnector)server.getConnectors()[0]).getLocalPort();
+  }
+
   public static OllieServerBuilder builder() {
     return new OllieServerBuilder();
   }

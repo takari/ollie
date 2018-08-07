@@ -13,9 +13,11 @@ import java.io.File;
 
 public class OllieServerTest {
 
+  protected OllieServer server;
+
   @Test
   public void validate() throws Exception {
-    OllieServer server = server();
+    server = server();
     executeStandardTests();
     server.stop();
   }
@@ -42,13 +44,14 @@ public class OllieServerTest {
   }
 
   protected String url(String path) {
-    return String.format("http://localhost:9000%s", path);
+    int port = server.port();
+    return String.format("http://localhost:%s%s", port, path);
   }
 
   protected static OllieServer server() {
     OllieServer server =
         OllieServer.builder()
-            .port(9000)
+            .port(0)
             .name("testserver")
             .packageToScan("com.walmartlabs.ollie.app")
             .secrets(file("secrets.properties"))
