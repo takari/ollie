@@ -6,20 +6,19 @@ import java.util.function.Consumer;
 
 abstract class IOExceptionWrapper {
 
-	private IOExceptionWrapper() {
-	}
+  private IOExceptionWrapper() {}
 
-	static interface ThrowingConsumer<T> {
-		void accept(T t) throws IOException;
-	}
+  static <T> Consumer<T> consumer(ThrowingConsumer<T> c) {
+    return (T t) -> {
+      try {
+        c.accept(t);
+      } catch (final IOException e) {
+        throw new UncheckedIOException(e);
+      }
+    };
+  }
 
-	static <T> Consumer<T> consumer(ThrowingConsumer<T> c) {
-		return (T t) -> {
-			try {
-				c.accept(t);
-			} catch (final IOException e) {
-				throw new UncheckedIOException(e);
-			}
-		};
-	}
+  static interface ThrowingConsumer<T> {
+    void accept(T t) throws IOException;
+  }
 }
