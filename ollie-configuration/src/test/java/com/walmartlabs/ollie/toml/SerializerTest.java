@@ -1,4 +1,4 @@
-package es.wobbl.toml;
+package com.walmartlabs.ollie.toml;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

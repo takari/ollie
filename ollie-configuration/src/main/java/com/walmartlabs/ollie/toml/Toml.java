@@ -1,4 +1,4 @@
-package es.wobbl.toml;
+package com.walmartlabs.ollie.toml;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -20,20 +20,17 @@ import org.apache.commons.lang3.StringEscapeUtils;
 
 import com.google.common.collect.Lists;
 
-import es.wobbl.toml.grammar.TomlBaseVisitor;
-import es.wobbl.toml.grammar.TomlLexer;
-import es.wobbl.toml.grammar.TomlParser;
-import es.wobbl.toml.grammar.TomlParser.ArrayContext;
-import es.wobbl.toml.grammar.TomlParser.BoolContext;
-import es.wobbl.toml.grammar.TomlParser.DatetimeContext;
-import es.wobbl.toml.grammar.TomlParser.HeaderContext;
-import es.wobbl.toml.grammar.TomlParser.NameContext;
-import es.wobbl.toml.grammar.TomlParser.NumberContext;
-import es.wobbl.toml.grammar.TomlParser.ObjectContext;
-import es.wobbl.toml.grammar.TomlParser.PairContext;
-import es.wobbl.toml.grammar.TomlParser.StringContext;
-import es.wobbl.toml.grammar.TomlParser.TomlContext;
-import es.wobbl.toml.grammar.TomlParser.ValueContext;
+import com.walmartlabs.ollie.toml.TomlParser.ArrayContext;
+import com.walmartlabs.ollie.toml.TomlParser.BoolContext;
+import com.walmartlabs.ollie.toml.TomlParser.DatetimeContext;
+import com.walmartlabs.ollie.toml.TomlParser.HeaderContext;
+import com.walmartlabs.ollie.toml.TomlParser.NameContext;
+import com.walmartlabs.ollie.toml.TomlParser.NumberContext;
+import com.walmartlabs.ollie.toml.TomlParser.ObjectContext;
+import com.walmartlabs.ollie.toml.TomlParser.PairContext;
+import com.walmartlabs.ollie.toml.TomlParser.StringContext;
+import com.walmartlabs.ollie.toml.TomlParser.TomlContext;
+import com.walmartlabs.ollie.toml.TomlParser.ValueContext;
 
 public final class Toml {
 
