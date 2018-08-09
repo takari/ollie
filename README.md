@@ -1,5 +1,8 @@
 # Ollie
 
+Ollie is Java-based application framework designed to simplify the 
+creation and distribution of REST-API enabled server applications.
+
 The creators of Ollie saw that many apps had common structures. They would
 have some kind of dependency injection framework, api documentation, a way to
 build and run the app, etc.. The goal with Ollie is to abstract as much of
@@ -34,8 +37,13 @@ Add the ollie-targetplatform to your dependencyManagement in your POM.xml:
      <scope>import</scope>
    </dependency>
  </dependencies>
-</dependencyManagement>```
+</dependencyManagement>
+```
 
+  Note that this was written for Ollie version 0.0.20. You can find the 
+  latest version here: 
+  http://repo1.maven.org/maven2/com/walmartlabs/ollie/ollie/
+ 
 Add ollie to your list of dependencies in your POM.xml:
 
 ```xml
