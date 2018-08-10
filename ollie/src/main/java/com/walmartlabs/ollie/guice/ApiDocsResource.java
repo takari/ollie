@@ -5,6 +5,7 @@ import java.io.IOException;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -28,15 +29,13 @@ import io.swagger.models.Swagger;
 @Path("/docs")
 public class ApiDocsResource implements Resource {
   
-  private final static Logger logger = LoggerFactory.getLogger(ApiDocsResource.class);
   private final Swagger swagger;
 
   @Inject
-  public ApiDocsResource(JaxRsClasses holder, OllieServerBuilder config) {
-    logger.info("Initializing {}", getClass().getName());
+  public ApiDocsResource(JaxRsClasses holder, HttpServletRequest request, OllieServerBuilder config) {
     swagger = new Swagger();
-    swagger.setSchemes(ImmutableList.of(Scheme.forValue("http")));
-    swagger.setHost("localhost:9000");
+    swagger.setSchemes(ImmutableList.of(Scheme.forValue(request.getScheme())));
+    swagger.setHost(String.format("%s://%s:%s", request.getScheme(), request.getServerName(), request.getLocalPort()));
     swagger.setBasePath(config.api());
     
     Info info = new Info();    
