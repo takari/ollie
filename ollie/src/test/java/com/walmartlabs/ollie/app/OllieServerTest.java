@@ -41,6 +41,8 @@ public class OllieServerTest {
 
     // TestServlet
     when().get(url("/testservlet")).then().body(containsString("servlet-config-string"));
+    // Swagger
+    when().get(url("/api/docs")).then().body("swagger", equalTo("2.0"));
   }
 
   protected String url(String path) {
