@@ -20,7 +20,11 @@ public class OllieServletModule extends ServletModule {
     OllieJaxRsModule jaxRsModule = new OllieJaxRsModule(serverConfiguration);
     install(jaxRsModule);
     //TODO: clean up this mess
-    serve(jaxRsModule.apiPatterns()[0] + "/*", jaxRsModule.morePatterns()).with(SiestaServlet.class, jaxRsModule.parameters());
+    String apiPattern = jaxRsModule.apiPattern();
+    if (!apiPattern.endsWith("/*")) {
+      apiPattern += "/*";
+    }
+    serve(apiPattern, jaxRsModule.morePatterns()).with(SiestaServlet.class, jaxRsModule.parameters());
     install(new OllieConfigurationModule(serverConfiguration));
     install(new OllieSecurityModule(serverConfiguration, getServletContext()));
   }
