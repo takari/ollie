@@ -49,6 +49,7 @@ public class OllieServerBuilder {
   int threadMaxIdleTime;
   boolean sessionsEnabled = false;
   boolean sslEnabled = false;
+  boolean secureCookiesEnabled = false;
   List<FilterDefinition> filterDefintions = Lists.newArrayList();
   List<ServletDefinition> servletDefinitions = Lists.newArrayList();
   List<StaticResourceDefinition> staticContentDefinitions = Lists.newArrayList();
@@ -200,6 +201,15 @@ public class OllieServerBuilder {
   
   public OllieServerBuilder sslEnabled(boolean sslEnabled) {
     this.sslEnabled = sslEnabled;
+    return this;
+  }
+
+  public boolean secureCookiesEnabled() {
+    return secureCookiesEnabled;
+  }
+
+  public OllieServerBuilder secureCookiesEnabled(boolean secureCookiesEnabled) {
+    this.secureCookiesEnabled = secureCookiesEnabled;
     return this;
   }
 

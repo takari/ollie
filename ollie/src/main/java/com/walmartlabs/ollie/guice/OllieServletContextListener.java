@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
+import javax.servlet.SessionCookieConfig;
 
 import com.google.common.collect.Lists;
 import com.google.inject.Guice;
@@ -47,6 +48,12 @@ public class OllieServletContextListener
     // We need to set the injector here first because super.contextInitialized() will call getInjector() so if we have not retrieved
     // our injector created elsewhere, say from a testing environment, a new one will be created and cause inconsistencies.
     injector = (Injector) event.getServletContext().getAttribute(INJECTOR_KEY);
+
+    if (config.secureCookiesEnabled()) {
+      SessionCookieConfig cfg = servletContext.getSessionCookieConfig();
+      cfg.setSecure(true);
+    }
+
     super.contextInitialized(event);
   }
 
