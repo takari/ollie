@@ -11,18 +11,10 @@ import com.walmartlabs.ollie.OllieServer;
 
 import java.io.File;
 
-public class OllieServerTest {
-
-  protected OllieServer server;
+public class OllieServerTest extends AbstractOllieServerTest {
 
   @Test
-  public void validate() throws Exception {
-    server = server();
-    executeStandardTests();
-    server.stop();
-  }
-
-  protected void executeStandardTests() throws Exception {
+  public void validate() {
     // TestResource
     when()
         .get(url("/api/test?name=ollie"))
@@ -43,35 +35,5 @@ public class OllieServerTest {
     when().get(url("/testservlet")).then().body(containsString("servlet-config-string"));
     // Swagger
     when().get(url("/api/docs")).then().body("swagger", equalTo("2.0"));
-  }
-
-  protected String url(String path) {
-    int port = server.port();
-    return String.format("http://localhost:%s%s", port, path);
-  }
-
-  protected static OllieServer server() {
-    OllieServer server =
-        OllieServer.builder()
-            .port(0)
-            .name("testserver")
-            .packageToScan("com.walmartlabs.ollie.app")
-            .secrets(file("secrets.properties"))
-            .serve("/testservlet")
-            .with(
-                TestServlet.class,
-                ImmutableMap.of("servlet.config.string", "servlet-config-string"))
-            .build();
-    server.start();
-    return server;
-  }
-
-  protected static File file(String path) {
-    String basedir = new File("").getAbsolutePath();
-    return new File(basedir, String.format("src/test/resources/%s", path));
-  }
-
-  public static void main(String[] args) {
-    OllieServer server = server();
   }
 }
