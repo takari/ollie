@@ -67,6 +67,8 @@ public class OllieServerBuilder {
   // Secrets
   File secrets;
 
+  boolean jmxEnabled = false;
+
   public OllieServer build() {           
     this.contextListener  = new OllieServletContextListener(this);
     filter("/*").through(CrossOriginFilter.class);
@@ -306,6 +308,11 @@ public class OllieServerBuilder {
 
   public OllieServerBuilder secrets(File secrets) {
     this.secrets = secrets;
+    return this;
+  }
+
+  public OllieServerBuilder jmxEnabled(boolean jmxEnabled) {
+    this.jmxEnabled = jmxEnabled;
     return this;
   }
 
