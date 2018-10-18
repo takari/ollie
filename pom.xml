@@ -4,7 +4,7 @@
   <parent>
     <groupId>io.takari</groupId>
     <artifactId>takari</artifactId>
-    <version>25</version>
+    <version>27</version>
   </parent>
   <groupId>com.walmartlabs.ollie</groupId>
   <artifactId>ollie-parent</artifactId>
@@ -19,6 +19,18 @@
     <maven.compiler.target>${takari.javaSourceVersion}</maven.compiler.target>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+    <db.baseDir>${project.build.directory}/persistence</db.baseDir>
+    <db.host>localhost</db.host>
+    <db.username>postgres</db.username>
+    <db.password>q1</db.password>
+    <db.changeLogPath>com/walmartlabs/gatekeeper/persistence/liquibase.xml</db.changeLogPath>
+
+    <db.port>5432</db.port>
+    <db.image>hub.docker.prod.walmart.com/library/postgres:10.4-alpine</db.image>
+    <network.mode>bridge</network.mode>
+    <network.name>bridge</network.name>
+    <jdbc.url>jdbc:postgresql://${db.host}:${db.port}/postgres</jdbc.url>
   </properties>
 
   <modules>
@@ -27,4 +39,119 @@
     <module>ollie-targetplatform</module>
     <module>ollie-db</module>
   </modules>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>42.2.4</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>io.fabric8</groupId>
+          <artifactId>docker-maven-plugin</artifactId>
+          <extensions>true</extensions>
+          <executions>
+            <execution>
+              <id>start</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>start</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>stop</id>
+              <phase>prepare-package</phase>
+              <goals>
+                <goal>stop</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <images>
+              <image>
+                <name>${db.image}</name>
+                <alias>db</alias>
+                <run>
+                  <ports>
+                    <port>${db.port}:5432</port>
+                  </ports>
+                  <env>
+                    <POSTGRES_PASSWORD>${db.password}</POSTGRES_PASSWORD>
+                  </env>
+                  <network>
+                    <mode>${network.mode}</mode>
+                    <name>${network.name}</name>
+                    <alias>db</alias>
+                  </network>
+                  <wait>
+                    <log>(?s).*ready for start up.*ready to accept connections.*</log>
+                    <time>30000</time>
+                  </wait>
+                </run>
+              </image>
+            </images>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.liquibase</groupId>
+          <artifactId>liquibase-maven-plugin</artifactId>
+          <version>${liquibase.version}</version>
+          <executions>
+            <execution>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>update</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <changeLogFile>src/main/resources/${db.changeLogPath}</changeLogFile>
+            <driver>org.postgresql.Driver</driver>
+            <url>jdbc:postgresql://${db.host}:${db.port}/postgres</url>
+            <username>${db.username}</username>
+            <password>${db.password}</password>
+            <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
+          </configuration>
+        </plugin>
+        <plugin>
+          <groupId>org.jooq</groupId>
+          <artifactId>jooq-codegen-maven</artifactId>
+          <executions>
+            <execution>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>generate</goal>
+              </goals>
+            </execution>
+          </executions>
+          <configuration>
+            <logging>WARN</logging>
+            <jdbc>
+              <driver>org.postgresql.Driver</driver>
+              <url>${jdbc.url}</url>
+              <user>${db.username}</user>
+              <password>${db.password}</password>
+            </jdbc>
+            <generator>
+              <database>
+                <name>org.jooq.meta.postgres.PostgresDatabase</name>
+                <inputSchema>public</inputSchema>
+                <includes>.*</includes>
+                <excludes>DATABASECHANGELOG.*</excludes>
+              </database>
+              <target>
+                <packageName>com.walmartlabs.gatekeeper.persistence.jooq</packageName>
+                <directory>target/generated-sources/gatekeeper-jooq</directory>
+              </target>
+            </generator>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+  </build>
 </project>
