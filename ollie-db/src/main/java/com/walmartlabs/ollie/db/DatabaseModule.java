@@ -31,7 +31,7 @@ public class DatabaseModule extends AbstractModule {
     private static final int MIGRATION_MAX_RETRIES = 10;
     private static final int MIGRATION_RETRY_DELAY = 10000;
 
-    private static final String DB_CHANGELOG_PATH = "com/walmartlabs/gatekeeper/persistence/liquibase.xml";
+    private static final String DB_CHANGELOG_PATH = "liquibase.xml";
     private static final String DB_CHANGELOG_LOG_TABLE = "SERVER_DB_LOG";
     private static final String DB_CHANGELOG_LOCK_TABLE = "SERVER_DB_LOCK";
 

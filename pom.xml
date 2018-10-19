@@ -20,13 +20,13 @@
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-    <db.baseDir>${project.build.directory}/persistence</db.baseDir>
+    <!--DB configuration -->
     <db.host>localhost</db.host>
+    <db.port>5432</db.port>
     <db.username>postgres</db.username>
     <db.password>q1</db.password>
-    <db.changeLogPath>com/walmartlabs/gatekeeper/persistence/liquibase.xml</db.changeLogPath>
+    <db.changeLogPath>liquibase.xml</db.changeLogPath>
 
-    <db.port>5432</db.port>
     <db.image>hub.docker.prod.walmart.com/library/postgres:10.4-alpine</db.image>
     <network.mode>bridge</network.mode>
     <network.name>bridge</network.name>
@@ -145,8 +145,8 @@
                 <excludes>DATABASECHANGELOG.*</excludes>
               </database>
               <target>
-                <packageName>com.walmartlabs.gatekeeper.persistence.jooq</packageName>
-                <directory>target/generated-sources/gatekeeper-jooq</directory>
+                <packageName>com.walmartlabs.persistence.jooq</packageName>
+                <directory>target/generated-sources/persistence-jooq</directory>
               </target>
             </generator>
           </configuration>
