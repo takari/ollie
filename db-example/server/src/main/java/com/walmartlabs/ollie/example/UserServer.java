@@ -19,6 +19,7 @@ public class UserServer {
     }
 
     public void start() {
+        logger.debug("debug");
         logger.info("Starting server");
         OllieServerBuilder builder = new OllieServerBuilder()
                 .port(9000)
