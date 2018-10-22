@@ -14,7 +14,7 @@
     <packaging>takari-jar</packaging>
 
     <properties>
-        <liquibase.version>3.5.1</liquibase.version>
+        <!--<liquibase.version>3.5.1</liquibase.version>-->
     </properties>
 
     <dependencyManagement>
@@ -61,27 +61,67 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+        </dependency>
     </dependencies>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>io.takari.maven.plugins</groupId>
-                <artifactId>takari-lifecycle-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>io.fabric8</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.liquibase</groupId>
-                <artifactId>liquibase-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.jooq</groupId>
-                <artifactId>jooq-codegen-maven</artifactId>
-            </plugin>
-        </plugins>
-    </build>
+    <profiles>
+        <profile>
+            <id>postgres</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.takari.maven.plugins</groupId>
+                        <artifactId>takari-lifecycle-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>io.fabric8</groupId>
+                        <artifactId>docker-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.liquibase</groupId>
+                        <artifactId>liquibase-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq-codegen-maven</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>h2</id>
+            <properties>
+                <db.schema>PUBLIC</db.schema>
+                <db.driver>org.h2.Driver</db.driver>
+                <db.url>jdbc:h2:${basedir}/target/users-example-codegen;DATABASE_TO_UPPER=false</db.url>
+                <db.username>sa</db.username>
+                <db.password/>
+                <db.changeLogPath>liquibase-h2.xml</db.changeLogPath>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>io.takari.maven.plugins</groupId>
+                        <artifactId>takari-lifecycle-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.liquibase</groupId>
+                        <artifactId>liquibase-maven-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.jooq</groupId>
+                        <artifactId>jooq-codegen-maven</artifactId>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
 </project>

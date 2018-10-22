@@ -27,6 +27,7 @@
     <hikaricp.version>3.2.0</hikaricp.version>
     <postgres.version>42.2.4</postgres.version>
     <metrics.version>3.2.2</metrics.version>
+    <h2.version>1.4.197</h2.version>
 
   </properties>
 
@@ -307,6 +308,11 @@
         <groupId>io.dropwizard.metrics</groupId>
         <artifactId>metrics-core</artifactId>
         <version>${metrics.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>${h2.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

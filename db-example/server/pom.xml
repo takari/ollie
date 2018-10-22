@@ -31,12 +31,12 @@
         <dependency>
             <groupId>com.walmartlabs.ollie</groupId>
             <artifactId>ollie-db</artifactId>
-            <version>0.0.27-SNAPSHOT</version>
+            <version>${ollie.version}</version>
         </dependency>
         <dependency>
             <groupId>com.walmartlabs.ollie</groupId>
             <artifactId>ollie</artifactId>
-            <version>0.0.27-SNAPSHOT</version>
+            <version>${ollie.version}</version>
         </dependency>
         <dependency>
             <groupId>com.walmartlabs.ollie</groupId>
@@ -74,6 +74,11 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
