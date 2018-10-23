@@ -4,12 +4,12 @@ Ollie is Java-based application framework designed to simplify the
 creation and distribution of REST-API enabled server applications.
 
 The creators of Ollie saw that many apps had common structures. They would
-have some kind of dependency injection framework, api documentation, a way to
-build and run the app, etc.. The goal with Ollie is to abstract as much of
-this common architecture as possible so that you, the user, can focus your
-attention on developing your application. By using Ollie you automatically 
-get Google Guice, Rest Api, swagger, configuration files, and packaging via 
-provisio (more on these below).
+have some kind of dependency injection framework, persistence, api 
+documentation, a way to build and run the app, etc.. The goal with Ollie is 
+to abstract as much of this common architecture as possible so that you, the 
+user, can focus your attention on developing your application. By using Ollie
+ you automatically get Google Guice, Rest Api, swagger, configuration files, 
+ and packaging via provisio (more on these below).
 
 
 ## Usage
@@ -267,6 +267,11 @@ The `provisio` folder will have one file:
  <artifactSet to="/lib" ref="runtime.classpath"/>
 </runtime>
 ```
+
+## Database
+Ollie can optionally allow for easy configuration of a database layer using 
+Liquibase and Jooq. Please see the [ollie-db readme](ollie-db/README.md) for 
+implementation details.
 
 # Goal
 
