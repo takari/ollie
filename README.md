@@ -267,6 +267,9 @@ The `provisio` folder will have one file:
  <artifactSet to="/lib" ref="runtime.classpath"/>
 </runtime>
 ```
+This relies on a property <launcherVersion> which will need to be specified 
+in your pom if it isn't already. At the time this was written I was using 
+`<launcherVersion>0.124</launcherVersion>`
 
 ## Database
 Ollie can optionally allow for easy configuration of a database layer using 
