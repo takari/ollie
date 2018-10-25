@@ -35,6 +35,8 @@ public class DatabaseModule extends AbstractModule {
     private static final String DB_CHANGELOG_LOG_TABLE = "DATABASECHANGELOG";
     private static final String DB_CHANGELOG_LOCK_TABLE = "DATABASECHANGELOGLOCK";
 
+    private static final String AUTO_MIGRATE_KEY = "ollie.db.autoMigrate";
+
     @Override
     protected void configure() {
     }
@@ -46,24 +48,27 @@ public class DatabaseModule extends AbstractModule {
     public Configuration appJooqConfiguration(DatabaseConfiguration cfg, MetricRegistry metricRegistry) {
         DataSource ds = createDataSource(cfg, "app", cfg.getAppUsername(), cfg.getAppPassword(), metricRegistry);
 
-        int retries = MIGRATION_MAX_RETRIES;
-        for (int i = 0; i < retries; i++) {
-            try (Connection c = ds.getConnection()) {
-                log.info("get -> performing DB migration...");
-                migrateDb(c, DB_CHANGELOG_PATH, DB_CHANGELOG_LOG_TABLE, DB_CHANGELOG_LOCK_TABLE);
-                log.info("get -> done");
-                break;
-            } catch (Exception e) {
-                if (i + 1 >= retries) {
-                    log.error("get -> db migration error, giving up", e);
-                    throw new RuntimeException(e);
-                }
+        String autoMigrate = System.getProperty(AUTO_MIGRATE_KEY);
+        if (autoMigrate == null || !autoMigrate.equalsIgnoreCase( "false")) {
+            int retries = MIGRATION_MAX_RETRIES;
+            for (int i = 0; i < retries; i++) {
+                try (Connection c = ds.getConnection()) {
+                    log.info("get -> performing DB migration...");
+                    migrateDb(c, DB_CHANGELOG_PATH, DB_CHANGELOG_LOG_TABLE, DB_CHANGELOG_LOCK_TABLE);
+                    log.info("get -> done");
+                    break;
+                } catch (Exception e) {
+                    if (i + 1 >= retries) {
+                        log.error("get -> db migration error, giving up", e);
+                        throw new RuntimeException(e);
+                    }
 
-                log.warn("get -> db migration error, retrying in {}ms: {}", MIGRATION_RETRY_DELAY, e.getMessage());
-                try {
-                    Thread.sleep(MIGRATION_RETRY_DELAY);
-                } catch (InterruptedException ee) {
-                    Thread.currentThread().interrupt();
+                    log.warn("get -> db migration error, retrying in {}ms: {}", MIGRATION_RETRY_DELAY, e.getMessage());
+                    try {
+                        Thread.sleep(MIGRATION_RETRY_DELAY);
+                    } catch (InterruptedException ee) {
+                        Thread.currentThread().interrupt();
+                    }
                 }
             }
         }
