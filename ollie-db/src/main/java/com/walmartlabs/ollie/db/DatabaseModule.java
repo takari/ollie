@@ -32,17 +32,18 @@ public class DatabaseModule extends AbstractModule {
     private static final int MIGRATION_RETRY_DELAY = 10000;
 
     private static final String DB_CHANGELOG_PATH = "liquibase.xml";
-    private static final String DB_CHANGELOG_LOG_TABLE = "SERVER_DB_LOG";
-    private static final String DB_CHANGELOG_LOCK_TABLE = "SERVER_DB_LOCK";
+    private static final String DB_CHANGELOG_LOG_TABLE = "DATABASECHANGELOG";
+    private static final String DB_CHANGELOG_LOCK_TABLE = "DATABASECHANGELOGLOCK";
 
     @Override
     protected void configure() {
     }
 
+
     @Provides
     @Named("app")
     @Singleton
-    public DataSource appDataSource(DatabaseConfiguration cfg, MetricRegistry metricRegistry) {
+    public Configuration appJooqConfiguration(DatabaseConfiguration cfg, MetricRegistry metricRegistry) {
         DataSource ds = createDataSource(cfg, "app", cfg.getAppUsername(), cfg.getAppPassword(), metricRegistry);
 
         int retries = MIGRATION_MAX_RETRIES;
@@ -67,14 +68,7 @@ public class DatabaseModule extends AbstractModule {
             }
         }
 
-        return ds;
-    }
-
-    @Provides
-    @Named("app")
-    @Singleton
-    public Configuration appJooqConfiguration(@Named("app") DataSource ds) {
-        return createJooqConfiguration(ds);
+        return createJooqConfiguration(ds, cfg.getDialect());
     }
 
 
@@ -110,7 +104,7 @@ public class DatabaseModule extends AbstractModule {
         lb.update((String) null);
     }
 
-    private static Configuration createJooqConfiguration(DataSource ds) {
+    private static Configuration createJooqConfiguration(DataSource ds, SQLDialect dialect) {
         Settings settings = new Settings();
         settings.setRenderSchema(false);
         settings.setRenderCatalog(false);
@@ -118,6 +112,6 @@ public class DatabaseModule extends AbstractModule {
         return new DefaultConfiguration()
                 .set(settings)
                 .set(ds)
-                .set(SQLDialect.POSTGRES);
+                .set(dialect);
     }
 }

@@ -17,13 +17,12 @@ public class UserDao extends AbstractDao {
         super(cfg);
     }
 
-    public UUID insert(String firstName, String lastName) {
-        return txResult(tx -> tx.insertInto(USERS)
-                .columns(USERS.FIRST_NAME, USERS.LAST_NAME)
-                .values(firstName, lastName)
-                .returning(USERS.ID)
-                .fetchOne()
-                .getId()
+    public void insert(String firstName, String lastName) {
+        UUID uuid = UUID.randomUUID();
+        txResult(tx -> tx.insertInto(USERS)
+                .columns(USERS.ID, USERS.FIRST_NAME, USERS.LAST_NAME)
+                .values(uuid, firstName, lastName)
+                .execute()
         );
     }
 

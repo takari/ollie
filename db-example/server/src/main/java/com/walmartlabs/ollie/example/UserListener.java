@@ -39,8 +39,8 @@ public class UserListener implements Resource {
     @ApiOperation("Deployment Notification")
     public Response addUser(User user) throws IOException {
         logger.info("Received user request: {}", user.toString());
-        UUID id = userDao.insert(user.getFirstName(), user.getLastName());
-        logger.info("Saved user to DB. ID: {}", id);
+        userDao.insert(user.getFirstName(), user.getLastName());
+        logger.info("Saved user to DB.");
         return Response.ok().build();
     }
 }

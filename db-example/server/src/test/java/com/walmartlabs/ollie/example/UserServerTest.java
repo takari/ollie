@@ -24,7 +24,7 @@ public class UserServerTest {
 
     @Test
     public void validUserServer() throws Exception {
-        //assertEquals(200, postTestResource("example/user", "user.json").code());
+        assertEquals(200, postTestResource("example/user", "user.json").code());
     }
 
     private Response postTestResource(String path, String resource) throws Exception {

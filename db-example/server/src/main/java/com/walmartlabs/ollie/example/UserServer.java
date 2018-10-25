@@ -19,13 +19,13 @@ public class UserServer {
     }
 
     public void start() {
-        logger.debug("debug");
         logger.info("Starting server");
         OllieServerBuilder builder = new OllieServerBuilder()
                 .port(9000)
                 .name("userServer") //name of .conf file in src/main/resources
                 .module(new DatabaseModule()) //wires DB configuration classes to injector
-                .packageToScan("com.walmartlabs.ollie.example");
+                .packageToScan("com.walmartlabs.ollie.example")
+                .packageToScan("com.walmartlabs.ollie.db"); //required to get db configuration from .conf file
 
         server = builder.build();
         server.start();

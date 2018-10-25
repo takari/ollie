@@ -1,6 +1,7 @@
 package com.walmartlabs.ollie.db;
 
 import com.walmartlabs.ollie.config.Config;
+import org.jooq.SQLDialect;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -28,12 +29,16 @@ public class DatabaseConfigurationProvider implements Provider<DatabaseConfigura
     private String appPassword;
 
     @Inject
+    @Config("db.dialect")
+    private String dialect;
+
+    @Inject
     @Config("db.maxPoolSize")
     private int maxPoolSize;
 
     @Override
     public DatabaseConfiguration get() {
         return new DatabaseConfiguration(driver, url,
-                appUsername, appPassword, maxPoolSize);
+                appUsername, appPassword, SQLDialect.valueOf(dialect), maxPoolSize);
     }
 }

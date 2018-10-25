@@ -3,17 +3,10 @@
                    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
                    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
 
-    <!-- enable UUID generation -->
-    <changeSet id="1" author="r0s012h">
-        <sql>
-            CREATE EXTENSION IF NOT EXISTS "uuid-ossp"
-        </sql>
-    </changeSet>
 
-    <changeSet author="r0s012h (generated)" id="1">
+    <changeSet author="r0s012h" id="1">
         <createTable remarks="List of Users" tableName="USERS">
-            <column defaultValueComputed="uuid_generate_v1()" name="ID" remarks="Unique key ID"
-                    type="UUID">
+            <column name="ID" remarks="Unique key ID" type="UUID">
                 <constraints nullable="false" deleteCascade="true"/>
             </column>
             <column name="FIRST_NAME" remarks="first name" type="VARCHAR(64)">

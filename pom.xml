@@ -21,19 +21,22 @@
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
     <!--DB configuration -->
+    <db.username>sa</db.username>
+    <db.password></db.password>
+    <db.driver>org.h2.Driver</db.driver>
+    <db.schema>PUBLIC</db.schema>
+    <db.changeLogPath>liquibase.xml</db.changeLogPath>
+    <db.url>jdbc:h2:${basedir}/target/users-example-codegen;DATABASE_TO_UPPER=false</db.url>
+
     <db.host>localhost</db.host>
     <db.port>5432</db.port>
-    <db.username>postgres</db.username>
-    <db.password>q1</db.password>
-    <db.driver>org.postgresql.Driver</db.driver>
-    <db.schema>public</db.schema>
-    <db.changeLogPath>liquibase.xml</db.changeLogPath>
 
+    <!-- only necessary if using docker plugin for jooq code gen -->
     <db.image>hub.docker.prod.walmart.com/library/postgres:10.4-alpine</db.image>
     <network.mode>bridge</network.mode>
     <network.name>bridge</network.name>
-    <db.url>jdbc:postgresql://${db.host}:${db.port}/postgres</db.url>
 
+    <!-- plugin versions -->
     <liquibase.version>3.5.1</liquibase.version>
   </properties>
 
@@ -44,13 +47,6 @@
     <module>ollie-db</module>
   </modules>
 
-  <dependencies>
-    <dependency>
-      <groupId>org.postgresql</groupId>
-      <artifactId>postgresql</artifactId>
-      <version>42.2.4</version>
-    </dependency>
-  </dependencies>
 
   <build>
     <pluginManagement>
