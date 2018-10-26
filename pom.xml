@@ -44,7 +44,6 @@
     <module>ollie</module>
     <module>ollie-configuration</module>    
     <module>ollie-targetplatform</module>
-    <module>ollie-db</module>
   </modules>
 
 

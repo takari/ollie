@@ -1,4 +1,4 @@
-package com.walmartlabs.ollie.db;
+package com.walmartlabs.ollie.database;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

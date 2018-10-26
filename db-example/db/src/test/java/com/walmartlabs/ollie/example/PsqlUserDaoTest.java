@@ -1,6 +1,6 @@
 package com.walmartlabs.ollie.example;
 
-import com.walmartlabs.ollie.db.AbstractDaoTest;
+import com.walmartlabs.ollie.database.AbstractDaoTest;
 import org.jooq.SQLDialect;
 import org.junit.Before;
 import org.junit.Ignore;

@@ -1,9 +1,8 @@
 package com.walmartlabs.ollie.example;
 
-import com.walmartlabs.ollie.db.AbstractDaoTest;
+import com.walmartlabs.ollie.database.AbstractDaoTest;
 import org.junit.Before;
 import org.junit.Test;
-
 
 public class UserDaoTest extends AbstractDaoTest {
     private UserDao userDao;

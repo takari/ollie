@@ -32,8 +32,8 @@
     <dependencies>
         <dependency>
             <groupId>com.walmartlabs.ollie</groupId>
-            <artifactId>ollie-db</artifactId>
-            <version>0.0.27-SNAPSHOT</version>
+            <artifactId>ollie</artifactId>
+            <version>${ollie.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>

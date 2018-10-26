@@ -2,7 +2,6 @@ package com.walmartlabs.ollie.example;
 
 import com.walmartlabs.ollie.OllieServer;
 import com.walmartlabs.ollie.OllieServerBuilder;
-import com.walmartlabs.ollie.db.DatabaseModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +22,8 @@ public class UserServer {
         OllieServerBuilder builder = new OllieServerBuilder()
                 .port(9000)
                 .name("userServer") //name of .conf file in src/main/resources
-                .module(new DatabaseModule()) //wires DB configuration classes to injector
                 .packageToScan("com.walmartlabs.ollie.example")
-                .packageToScan("com.walmartlabs.ollie.db"); //required to get db configuration from .conf file
+                .databaseSupport(true);
 
         server = builder.build();
         server.start();

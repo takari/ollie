@@ -32,7 +32,8 @@ public class OllieServerBuilder {
   String docs = "/docs";
   String title = "Swagger Console";
   String description = "Swagger Console";
-  String packageToScan;  
+  String packageToScan;
+  boolean databaseSupport = false;
   List<Module> modules = Lists.newArrayList();
   // Security
   List<Class<? extends Realm>> realms;
@@ -122,6 +123,15 @@ public class OllieServerBuilder {
 
   public String docs() {
     return docs;
+  }
+
+  public OllieServerBuilder databaseSupport(boolean dbSupport) {
+    this.databaseSupport = dbSupport;
+    return this;
+  }
+
+  public boolean hasDBSupport() {
+    return this.databaseSupport;
   }
   
   public OllieServerBuilder packageToScan(String packageToScan) {

@@ -1,6 +1,6 @@
 package com.walmartlabs.ollie.example;
 
-import com.walmartlabs.ollie.db.AbstractDao;
+import com.walmartlabs.ollie.database.AbstractDao;
 import org.jooq.Configuration;
 
 import javax.inject.Inject;

@@ -13,6 +13,7 @@ import com.google.inject.Module;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.walmartlabs.ollie.OllieServerBuilder;
 
+import com.walmartlabs.ollie.database.DatabaseModule;
 import org.eclipse.sisu.space.BeanScanning;
 import org.eclipse.sisu.space.SpaceModule;
 import org.eclipse.sisu.space.URLClassSpace;
@@ -85,6 +86,9 @@ public class OllieServletContextListener
   protected void configureModules(final List<Module> modules) {
     modules.add(new SpaceModule(new URLClassSpace(getClass().getClassLoader()), BeanScanning.CACHE));
     modules.add(new OllieServletModule(config));
+    if (config.hasDBSupport()) {
+      modules.add(new DatabaseModule(config));
+    }
     modules.addAll(config.modules());
   }
 }

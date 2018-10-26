@@ -1,4 +1,4 @@
-package com.walmartlabs.ollie.db;
+package com.walmartlabs.ollie.database;
 
 import org.jooq.Configuration;
 import org.jooq.DSLContext;

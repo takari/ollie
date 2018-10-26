@@ -1,8 +1,13 @@
-package com.walmartlabs.ollie.db;
+package com.walmartlabs.ollie.database;
 
 import com.codahale.metrics.MetricRegistry;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
+import com.typesafe.config.Config;
+import com.walmartlabs.ollie.OllieServerBuilder;
+import com.walmartlabs.ollie.config.ConfigurationProcessor;
+import com.walmartlabs.ollie.config.DatabaseConfigurationProvider;
+import com.walmartlabs.ollie.config.EnvironmentSelector;
 import com.zaxxer.hikari.HikariDataSource;
 import liquibase.Liquibase;
 import liquibase.database.Database;
@@ -36,6 +41,19 @@ public class DatabaseModule extends AbstractModule {
     private static final String DB_CHANGELOG_LOCK_TABLE = "DATABASECHANGELOGLOCK";
 
     private static final String AUTO_MIGRATE_KEY = "ollie.db.autoMigrate";
+
+    private final Config config;
+
+    public DatabaseModule() {
+        config = null;
+    }
+
+    public DatabaseModule(Config config) {
+        this.config = config;
+    }
+    public DatabaseModule(OllieServerBuilder config) {
+        this(new ConfigurationProcessor(config.name(), new EnvironmentSelector().select(), null, config.secrets()).process());
+    }
 
     @Override
     protected void configure() {
@@ -74,6 +92,12 @@ public class DatabaseModule extends AbstractModule {
         }
 
         return createJooqConfiguration(ds, cfg.getDialect());
+    }
+
+    @Provides
+    @Singleton
+    public DatabaseConfiguration getDatabaseConfiguration() {
+        return new DatabaseConfigurationProvider(config).get();
     }
 
 
