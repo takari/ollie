@@ -44,6 +44,7 @@
     <module>ollie</module>
     <module>ollie-configuration</module>    
     <module>ollie-targetplatform</module>
+    <module>examples</module>
   </modules>
 
 

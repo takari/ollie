@@ -6,12 +6,13 @@
     <parent>
         <groupId>com.walmartlabs.ollie</groupId>
         <artifactId>db-example-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.27-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>db</artifactId>
     <packaging>takari-jar</packaging>
+    <name>db-example :: db</name>
 
     <properties>
         <!--<liquibase.version>3.5.1</liquibase.version>-->
