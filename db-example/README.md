@@ -1,4 +1,4 @@
-# Ollie DB
+# Ollie DB Configuration Example
 ## Overview
 The Ollie database layer allows users to easily add database integration into
  their application via Liquibase and Jooq. The process breaks down into two 
@@ -27,15 +27,15 @@ Jooq is a code generation tool. You provide Jooq the credentials to access an
  reading/writing to matches the schema structure of the DB that was scanned 
  for code generation).
 
-##Code generation
-####Purpose
+## Code generation
+#### Purpose
 We separate the code generation step from the run time data access step so 
 that you don't need to depend on your end database in order to build your 
 application. So rather than scanning your production database, this step will
  create a temporary local database, use liquibase to load your schemas to 
  that DB, and then scan those schemas with Jooq to make Jooq's model classes.
 
-####Configuration
+#### Configuration
 All of the build time code generation will happen inside your pom.xml file 
 and will make use of some preconfigured plugins from Ollie's parent pom.
 
@@ -150,7 +150,7 @@ lifting here as well by providing a handful of library classes for you. These
  ```
  Note that database support was added in Ollie version 0.0.27.
 
-####DatabaseModule
+#### DatabaseModule
 The DatabaseModule class will set up your dependency injector so that 
 whenever you create a DAO class it will set up your, data source, and attempt
  a Liquibase DB migration. It will execute the migration using the changelog 
