@@ -273,8 +273,8 @@ in your pom if it isn't already. At the time this was written I was using
 
 ## Database
 Ollie can optionally allow for easy configuration of a database layer using 
-Liquibase and Jooq. Please see the [db-example readme](db-example) for 
-implementation details.
+Liquibase and Jooq. Please see the [db-example readme](examples/db-example)
+ for implementation details.
 
 # Goal
 

@@ -3,12 +3,13 @@
     <parent>
         <groupId>com.walmartlabs.ollie</groupId>
         <artifactId>db-example-parent</artifactId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.0.27-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>server</artifactId>
     <packaging>provisio</packaging>
+    <name>db-example :: server</name>
 
     <properties>
         <main-class>com.walmartlabs.ollie.example.UserServer</main-class>
@@ -36,7 +37,7 @@
         <dependency>
             <groupId>com.walmartlabs.ollie</groupId>
             <artifactId>db</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <version>${ollie.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>

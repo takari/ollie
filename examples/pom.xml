@@ -8,17 +8,11 @@
     </parent>
 
     <groupId>com.walmartlabs.ollie</groupId>
-    <artifactId>db-example-parent</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>examples-parent</artifactId>
     <packaging>pom</packaging>
-
-    <properties>
-        <ollie.version>0.0.27-SNAPSHOT</ollie.version>
-        <launcherVersion>0.124</launcherVersion>
-    </properties>
+    <name>Ollie :: Examples</name>
 
     <modules>
-        <module>server</module>
-        <module>db</module>
+        <module>db-example</module>
     </modules>
 </project>
