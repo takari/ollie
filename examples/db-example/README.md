@@ -103,6 +103,11 @@ While this default configuration has its advantages, we recognize it might
 not fit the needs of your application, so we exposed certain overridable 
 properties so you can customize the code generation step.
 
+You can configure the file to use as your change log file by overriding the 
+`<db.changeLogFile>directory/change.xml</db.changeLogFile>` property. If you 
+were to do it like in this example Liquibase would use 
+`src/main/resources/directory/change.xml` as your change log file.
+
 Here is an example that uses PostgreSQL for its code generation:
 
 ```xml
@@ -193,11 +198,25 @@ OllieServerBuilder builder = new OllieServerBuilder()
         .port(9000)
         .name("userServer") 
         .packageToScan("com.walmartlabs.ollie.example")
-        .databaseSupport(true);
+        .databaseSupport();
 
 server = builder.build();
 server.start();
 ```
+
+You can configure the location of your changelog file by using the overloaded
+ `databaseSupport(String changeLogFile)` method:
+ 
+ ```
+ OllieServerBuilder builder = new OllieServerBuilder()
+         .port(9000)
+         .name("userServer") 
+         .packageToScan("com.walmartlabs.ollie.example")
+         .databaseSupport("directory/change.xml");
+ 
+ server = builder.build();
+ server.start();
+ ```
 
 ### DatabaseConfigurationProvider
 

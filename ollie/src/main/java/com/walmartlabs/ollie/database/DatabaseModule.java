@@ -36,7 +36,7 @@ public class DatabaseModule extends AbstractModule {
     private static final int MIGRATION_MAX_RETRIES = 10;
     private static final int MIGRATION_RETRY_DELAY = 10000;
 
-    private static final String DB_CHANGELOG_PATH = "liquibase.xml";
+    private String DB_CHANGELOG_PATH = "liquibase.xml";
     private static final String DB_CHANGELOG_LOG_TABLE = "DATABASECHANGELOG";
     private static final String DB_CHANGELOG_LOCK_TABLE = "DATABASECHANGELOGLOCK";
 
@@ -48,11 +48,14 @@ public class DatabaseModule extends AbstractModule {
         config = null;
     }
 
-    public DatabaseModule(Config config) {
+    public DatabaseModule(Config config, String changeLogPath) {
+
         this.config = config;
+        this.DB_CHANGELOG_PATH = changeLogPath;
     }
     public DatabaseModule(OllieServerBuilder config) {
-        this(new ConfigurationProcessor(config.name(), new EnvironmentSelector().select(), null, config.secrets()).process());
+        this(new ConfigurationProcessor(config.name(), new EnvironmentSelector().select(), null, config.secrets()).process(),
+                config.changeLogFile());
     }
 
     @Override
