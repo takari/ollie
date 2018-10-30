@@ -2,7 +2,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.walmartlabs.ollie</groupId>
-        <artifactId>ollie-parent</artifactId>
+        <artifactId>examples-parent</artifactId>
         <version>0.0.27-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>

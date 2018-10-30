@@ -38,6 +38,7 @@
 
     <!-- plugin versions -->
     <liquibase.version>3.5.1</liquibase.version>
+    <jooq.version>3.11.5</jooq.version>
   </properties>
 
   <modules>
@@ -121,6 +122,7 @@
         <plugin>
           <groupId>org.jooq</groupId>
           <artifactId>jooq-codegen-maven</artifactId>
+          <version>${jooq.version}</version>
           <executions>
             <execution>
               <phase>generate-sources</phase>
