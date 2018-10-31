@@ -154,10 +154,13 @@ Docker container with a PostgreSQL image on it for temporary use. The docker
 plugin has some defaults that can be overridden as well which are:
 
 ```xml
-<db.image>hub.docker.prod.walmart.com/library/postgres:10.4-alpine</db.image>
+<db.image>postgres:10</db.image>
 <network.mode>bridge</network.mode>
 <network.name>bridge</network.name>
 ```
+
+Keep in mind that some networks don't allow access to the public Docker images 
+so you may need to use an image hosted on your own internal network.
 
 ## Run Time Database Access
 

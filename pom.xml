@@ -32,7 +32,7 @@
     <db.port>5432</db.port>
 
     <!-- only necessary if using docker plugin for jooq code gen -->
-    <db.image>hub.docker.prod.walmart.com/library/postgres:10.4-alpine</db.image>
+    <db.image>postgres:10</db.image>
     <network.mode>bridge</network.mode>
     <network.name>bridge</network.name>
 
