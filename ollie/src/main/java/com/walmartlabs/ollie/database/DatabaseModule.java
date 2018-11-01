@@ -36,26 +36,31 @@ public class DatabaseModule extends AbstractModule {
     private static final int MIGRATION_MAX_RETRIES = 10;
     private static final int MIGRATION_RETRY_DELAY = 10000;
 
-    private String DB_CHANGELOG_PATH = "liquibase.xml";
-    private static final String DB_CHANGELOG_LOG_TABLE = "DATABASECHANGELOG";
-    private static final String DB_CHANGELOG_LOCK_TABLE = "DATABASECHANGELOGLOCK";
+    private String DB_CHANGELOG_PATH;
+    private String DB_CHANGELOG_LOG_TABLE;
+    private String DB_CHANGELOG_LOCK_TABLE;
 
     private static final String AUTO_MIGRATE_KEY = "ollie.db.autoMigrate";
 
     private final Config config;
 
-    public DatabaseModule() {
+    public DatabaseModule(String changeLogPath, String logTableName, String lockTableName) {
         config = null;
+        DB_CHANGELOG_PATH = changeLogPath;
+        DB_CHANGELOG_LOG_TABLE = logTableName;
+        DB_CHANGELOG_LOCK_TABLE = lockTableName;
     }
 
-    public DatabaseModule(Config config, String changeLogPath) {
+    public DatabaseModule(Config config, String changeLogPath, String changeLogTableName, String changeLogLockTableName) {
 
         this.config = config;
         this.DB_CHANGELOG_PATH = changeLogPath;
+        this.DB_CHANGELOG_LOG_TABLE = changeLogTableName;
+        this.DB_CHANGELOG_LOCK_TABLE = changeLogLockTableName;
     }
     public DatabaseModule(OllieServerBuilder config) {
         this(new ConfigurationProcessor(config.name(), new EnvironmentSelector().select(), null, config.secrets()).process(),
-                config.changeLogFile());
+                config.changeLogFile(), config.changeLogTableName(), config.changeLogLockTableName());
     }
 
     @Override

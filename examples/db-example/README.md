@@ -211,15 +211,15 @@ You can configure the location of your changelog file by using the overloaded
  `databaseSupport(String changeLogFile)` method:
  
  ```
- OllieServerBuilder builder = new OllieServerBuilder()
-         .port(9000)
-         .name("userServer") 
-         .packageToScan("com.walmartlabs.ollie.example")
-         .databaseSupport("directory/change.xml");
- 
- server = builder.build();
- server.start();
+ .databaseSupport("directory/change.xml");
  ```
+ 
+You can also configure the names of the Liquibase changeLog table and lock 
+table. They default to `DATABASE_CHANGE_LOG` and `DATABASE_CHANGE_LOG_LOCK`. 
+
+```
+.databaseSupport("liquibase.xml", "new_change_log", "new_lock")
+```
 
 ### DatabaseConfigurationProvider
 

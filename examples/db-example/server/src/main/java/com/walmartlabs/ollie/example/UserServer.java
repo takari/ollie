@@ -23,7 +23,7 @@ public class UserServer {
                 .port(9000)
                 .name("userServer") //name of .conf file in src/main/resources
                 .packageToScan("com.walmartlabs.ollie.example")
-                .databaseSupport();
+                .databaseSupport("liquibase.xml", "LOG_TABLE", "LOCK_TABLE");
 
         server = builder.build();
         server.start();
