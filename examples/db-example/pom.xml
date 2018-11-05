@@ -13,7 +13,6 @@
     <name>db-example :: parent</name>
 
     <properties>
-        <ollie.version>0.0.27-SNAPSHOT</ollie.version>
         <launcherVersion>0.124</launcherVersion>
     </properties>
 

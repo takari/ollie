@@ -23,7 +23,7 @@
             <dependency>
                 <groupId>com.walmartlabs.ollie</groupId>
                 <artifactId>ollie-targetplatform</artifactId>
-                <version>${ollie.version}</version>
+                <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -34,7 +34,7 @@
         <dependency>
             <groupId>com.walmartlabs.ollie</groupId>
             <artifactId>ollie</artifactId>
-            <version>${ollie.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
