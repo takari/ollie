@@ -1,0 +1,23 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+<databaseChangeLog xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+                   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+
+    <changeSet author="r0s012h" id="1">
+        <createTable remarks="List of Users" tableName="USERS">
+            <column name="ID" remarks="Unique key ID" type="UUID">
+                <constraints nullable="false" deleteCascade="true"/>
+            </column>
+            <column name="FIRST_NAME" remarks="first name" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="LAST_NAME" remarks="last name" type="VARCHAR(64)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+        <addPrimaryKey tableName="USERS" columnNames="ID" constraintName="PK_USERS_ID"/>
+    </changeSet>
+
+
+</databaseChangeLog>

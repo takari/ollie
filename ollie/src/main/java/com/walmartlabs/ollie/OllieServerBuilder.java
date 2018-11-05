@@ -32,7 +32,11 @@ public class OllieServerBuilder {
   String docs = "/docs";
   String title = "Swagger Console";
   String description = "Swagger Console";
-  String packageToScan;  
+  String packageToScan;
+  boolean databaseSupport = false;
+  String changeLogFile = "liquibase.xml";
+  String changeLogTableName = "DATABASE_CHANGE_LOG";
+  String changeLogLockTableName = "DATABASE_CHANGE_LOG_LOCK";
   List<Module> modules = Lists.newArrayList();
   // Security
   List<Class<? extends Realm>> realms;
@@ -123,6 +127,35 @@ public class OllieServerBuilder {
   public String docs() {
     return docs;
   }
+
+  public OllieServerBuilder databaseSupport() {
+    this.databaseSupport = true;
+    return this;
+  }
+
+  public OllieServerBuilder databaseSupport(String changeLogFile) {
+    this.databaseSupport = true;
+    this.changeLogFile = changeLogFile;
+    return this;
+  }
+
+  public OllieServerBuilder databaseSupport(String changeLogFile, String logTableName, String lockTableName) {
+    this.databaseSupport = true;
+    this.changeLogFile = changeLogFile;
+    this.changeLogTableName = logTableName;
+    this.changeLogLockTableName = lockTableName;
+    return this;
+  }
+
+  public boolean hasDBSupport() {
+    return this.databaseSupport;
+  }
+
+  public String changeLogFile() { return this.changeLogFile; }
+
+  public String changeLogTableName() { return this.changeLogTableName; }
+
+  public String changeLogLockTableName() { return this.changeLogLockTableName; }
   
   public OllieServerBuilder packageToScan(String packageToScan) {
     this.packageToScan = packageToScan;

@@ -22,6 +22,13 @@
     <jackson.version>2.8.2</jackson.version>
     <okhttp.version>3.10.0</okhttp.version>
     <airlift.version>0.171</airlift.version>
+    <jooq.version>3.11.3</jooq.version>
+    <liquibase.version>3.5.1</liquibase.version> <!-- the newer versions (up to 3.5.3) have incorrect mappings for PG's blob/bytea -->
+    <hikaricp.version>3.2.0</hikaricp.version>
+    <postgres.version>42.2.4</postgres.version>
+    <metrics.version>3.2.2</metrics.version>
+    <h2.version>1.4.197</h2.version>
+
   </properties>
 
   <dependencyManagement>
@@ -276,6 +283,36 @@
         <artifactId>rest-assured</artifactId>
         <version>3.1.0</version>
         <scope>test</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.jooq</groupId>
+        <artifactId>jooq</artifactId>
+        <version>${jooq.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${postgres.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.zaxxer</groupId>
+        <artifactId>HikariCP</artifactId>
+        <version>${hikaricp.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-core</artifactId>
+        <version>${liquibase.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.dropwizard.metrics</groupId>
+        <artifactId>metrics-core</artifactId>
+        <version>${metrics.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.h2database</groupId>
+        <artifactId>h2</artifactId>
+        <version>${h2.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
