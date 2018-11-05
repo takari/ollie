@@ -8,7 +8,7 @@
   </parent>
   <groupId>com.walmartlabs.ollie</groupId>
   <artifactId>ollie-parent</artifactId>
-  <version>0.0.27-SNAPSHOT</version>
+  <version>0.0.27</version>
   <name>Ollie :: Parent</name>
   <packaging>pom</packaging>
 
@@ -22,7 +22,7 @@
 
     <!--DB configuration -->
     <db.username>sa</db.username>
-    <db.password></db.password>
+    <db.password />
     <db.driver>org.h2.Driver</db.driver>
     <db.schema>PUBLIC</db.schema>
     <db.changeLogPath>liquibase.xml</db.changeLogPath>
@@ -155,4 +155,8 @@
       </plugins>
     </pluginManagement>
   </build>
+
+  <scm>
+    <tag>ollie-parent-0.0.27</tag>
+  </scm>
 </project>
