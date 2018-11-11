@@ -2,8 +2,10 @@ package com.walmartlabs.ollie;
 
 import java.io.File;
 import java.security.SecureRandom;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.Filter;
@@ -53,7 +55,7 @@ public class OllieServerBuilder {
   int threadMaxIdleTime;
   boolean sessionsEnabled = false;
   boolean sslEnabled = false;
-  boolean secureCookiesEnabled = false;
+  Set<SessionCookieOptions> sessionCookieOptions = Collections.emptySet();
   List<FilterDefinition> filterDefintions = Lists.newArrayList();
   List<ServletDefinition> servletDefinitions = Lists.newArrayList();
   List<StaticResourceDefinition> staticContentDefinitions = Lists.newArrayList();
@@ -239,12 +241,12 @@ public class OllieServerBuilder {
     return this;
   }
 
-  public boolean secureCookiesEnabled() {
-    return secureCookiesEnabled;
+  public Set<SessionCookieOptions> sessionCookieOptions() {
+    return sessionCookieOptions;
   }
 
-  public OllieServerBuilder secureCookiesEnabled(boolean secureCookiesEnabled) {
-    this.secureCookiesEnabled = secureCookiesEnabled;
+  public OllieServerBuilder sessionCookieOptions(Set<SessionCookieOptions> sessionCookieOptions) {
+    this.sessionCookieOptions = sessionCookieOptions;
     return this;
   }
 
