@@ -1,6 +1,7 @@
 package com.walmartlabs.ollie.guice;
 
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
@@ -13,6 +14,7 @@ import com.google.inject.Module;
 import com.google.inject.servlet.GuiceServletContextListener;
 import com.walmartlabs.ollie.OllieServerBuilder;
 
+import com.walmartlabs.ollie.SessionCookieOptions;
 import com.walmartlabs.ollie.database.DatabaseModule;
 import org.eclipse.sisu.space.BeanScanning;
 import org.eclipse.sisu.space.SpaceModule;
@@ -50,9 +52,13 @@ public class OllieServletContextListener
     // our injector created elsewhere, say from a testing environment, a new one will be created and cause inconsistencies.
     injector = (Injector) event.getServletContext().getAttribute(INJECTOR_KEY);
 
-    if (config.secureCookiesEnabled()) {
-      SessionCookieConfig cfg = servletContext.getSessionCookieConfig();
+    Set<SessionCookieOptions> opts = config.sessionCookieOptions();
+    SessionCookieConfig cfg = servletContext.getSessionCookieConfig();
+    if (opts.contains(SessionCookieOptions.SECURE)) {
       cfg.setSecure(true);
+    }
+    if (opts.contains(SessionCookieOptions.HTTP_ONLY)) {
+      cfg.setHttpOnly(true);
     }
 
     super.contextInitialized(event);
