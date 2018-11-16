@@ -19,13 +19,13 @@
     <siesta.version>2.3.1</siesta.version>
     <resteasy.version>3.1.4.Final</resteasy.version>
     <swagger.version>1.5.16</swagger.version>
-    <jackson.version>2.8.2</jackson.version>
+    <jackson.version>2.9.6</jackson.version>
     <okhttp.version>3.10.0</okhttp.version>
     <airlift.version>0.171</airlift.version>
     <jooq.version>3.11.3</jooq.version>
     <liquibase.version>3.5.1</liquibase.version> <!-- the newer versions (up to 3.5.3) have incorrect mappings for PG's blob/bytea -->
     <hikaricp.version>3.2.0</hikaricp.version>
-    <postgres.version>42.2.4</postgres.version>
+    <postgres.version>42.2.5</postgres.version>
     <metrics.version>3.2.2</metrics.version>
     <h2.version>1.4.197</h2.version>
 
