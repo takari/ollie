@@ -154,5 +154,39 @@
         </plugin>
       </plugins>
     </pluginManagement>
+
+    <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>license-maven-plugin</artifactId>
+        <version>1.14</version>
+        <executions>
+          <execution>
+            <id>first</id>
+            <goals>
+              <goal>update-file-header</goal>
+            </goals>
+            <phase>process-sources</phase>
+          </execution>
+        </executions>
+        <configuration>
+          <verbose>false</verbose>
+          <licenseName>apache_v2</licenseName>
+          <organizationName>Takari</organizationName>
+          <projectName>Ollie</projectName>
+          <inceptionYear>2018</inceptionYear>
+          <processStartTag>*****</processStartTag>
+          <sectionDelimiter>-----</sectionDelimiter>
+          <processEndTag>=====</processEndTag>
+          <roots>
+            <root>src/main/java</root>
+            <root>src/test/java</root>
+          </roots>
+          <extraExtensions>
+            <tsx>java</tsx>
+          </extraExtensions>
+        </configuration>
+      </plugin>
+    </plugins>
   </build>
 </project>
