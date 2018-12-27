@@ -72,8 +72,10 @@ public class OllieServerBuilder {
   int port = 8080;
   int minThreads = 2;
   int maxThreads = 200;
-  int threadMaxIdleTime;
+
   boolean sessionsEnabled = false;
+  int sessionMaxInactiveInterval = -1;
+
   boolean sslEnabled = false;
   Set<SessionCookieOptions> sessionCookieOptions = Collections.emptySet();
   List<FilterDefinition> filterDefintions = Lists.newArrayList();
@@ -249,6 +251,11 @@ public class OllieServerBuilder {
   
   public OllieServerBuilder sessionsEnabled(boolean sessionsEnabled) {
     this.sessionsEnabled = sessionsEnabled;
+    return this;
+  }
+
+  public OllieServerBuilder sessionMaxInactiveInterval(int sessionMaxInactiveInterval) {
+    this.sessionMaxInactiveInterval = sessionMaxInactiveInterval;
     return this;
   }
 

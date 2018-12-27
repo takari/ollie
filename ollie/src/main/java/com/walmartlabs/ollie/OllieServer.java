@@ -51,6 +51,7 @@ import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.server.handler.StatisticsHandler;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -166,7 +167,7 @@ public class OllieServer {
     if (config.staticContentDefinitions.size() > 0) {
       logger.info("Setting up static resources handlers.");
       for (StaticResourceDefinition definition : config.staticContentDefinitions) {
-        String[] welcomeFiles = definition.getWelcomeFiles().toArray(new String[definition.getWelcomeFiles().size()]);
+        String[] welcomeFiles = definition.getWelcomeFiles().toArray(new String[0]);
         File fileResourcePath = new File(definition.getResource());
         if (fileResourcePath.exists()) {
           contextHandlerCollection.addHandler(fileResourceHandler(definition));
@@ -178,10 +179,17 @@ public class OllieServer {
 
     int options = ServletContextHandler.NO_SESSIONS;
     if (config.sessionsEnabled) {
+      logger.info("Enabling session support.");
       options |= ServletContextHandler.SESSIONS;
     }
 
     ServletContextHandler applicationContext = new ServletContextHandler(options);
+
+    if (config.sessionMaxInactiveInterval > 0) {
+      logger.info("Setting max inactive interval for sessions: {}s.", config.sessionMaxInactiveInterval);
+      SessionHandler sessionHandler = applicationContext.getSessionHandler();
+      sessionHandler.setMaxInactiveInterval(config.sessionMaxInactiveInterval);
+    }
 
     if (config.contextListener != null) {
       logger.info("Adding context listener {}.", config.contextListener.getClass().getName());
@@ -227,7 +235,7 @@ public class OllieServer {
   }
 
   private ContextHandler fileResourceHandler(StaticResourceDefinition definition) {
-    String[] welcomeFiles = definition.getWelcomeFiles().toArray(new String[definition.getWelcomeFiles().size()]);
+    String[] welcomeFiles = definition.getWelcomeFiles().toArray(new String[0]);
     ContextHandler contextHandler = new ContextHandler();
     ResourceHandler resourceHandler = new ResourceHandler();
     File css = new File(definition.getResource(), "jetty-dir.css");
