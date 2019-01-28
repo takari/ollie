@@ -32,6 +32,8 @@ import javax.servlet.Filter;
 import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpServlet;
 
+import com.walmartlabs.ollie.guice.OllieSecurityModule;
+import com.walmartlabs.ollie.guice.OllieSecurityModuleProvider;
 import org.apache.shiro.realm.Realm;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
@@ -96,6 +98,8 @@ public class OllieServerBuilder {
   File secrets;
 
   boolean jmxEnabled = false;
+
+  OllieSecurityModuleProvider securityModuleProvider;
 
   public OllieServer build() {           
     this.contextListener  = new OllieServletContextListener(this);
@@ -375,6 +379,15 @@ public class OllieServerBuilder {
 
   public OllieServerBuilder jmxEnabled(boolean jmxEnabled) {
     this.jmxEnabled = jmxEnabled;
+    return this;
+  }
+
+  public OllieSecurityModuleProvider securityModuleProvider() {
+    return this.securityModuleProvider;
+  }
+
+  public OllieServerBuilder securityModuleProvider(OllieSecurityModuleProvider securityModuleProvider) {
+    this.securityModuleProvider = securityModuleProvider;
     return this;
   }
 

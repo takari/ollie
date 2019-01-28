@@ -46,6 +46,11 @@ public class OllieServletModule extends ServletModule {
     }
     serve(apiPattern, jaxRsModule.morePatterns()).with(SiestaServlet.class, jaxRsModule.parameters());
     install(new OllieConfigurationModule(serverConfiguration));
-    install(new OllieSecurityModule(serverConfiguration, getServletContext()));
+
+    OllieSecurityModuleProvider securityModuleProvider = serverConfiguration.securityModuleProvider();
+    if (securityModuleProvider == null) {
+      securityModuleProvider = OllieSecurityModule::new;
+    }
+    install(securityModuleProvider.get(serverConfiguration, getServletContext()));
   }
 }

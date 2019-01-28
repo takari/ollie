@@ -50,10 +50,14 @@ public class OllieSecurityModule extends AbstractModule {
   @Override
   protected void configure() {
     if (serverConfiguration.realms() != null) {
-      install(new SecurityWebModule(servletContext));
+      install(createSecurityWebModule(servletContext));
       install(new SecurityAnnotationsModule());
       ShiroWebModule.bindGuiceFilter(binder()); // filter(/*).through(GuiceShiroFilter.class)
     }
+  }
+
+  protected SecurityWebModule createSecurityWebModule(ServletContext servletContext) {
+    return new SecurityWebModule(servletContext);
   }
 
   public class SecurityWebModule extends ShiroWebModule {
