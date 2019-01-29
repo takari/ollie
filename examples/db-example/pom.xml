@@ -3,7 +3,7 @@
     <parent>
         <groupId>com.walmartlabs.ollie</groupId>
         <artifactId>examples-parent</artifactId>
-        <version>0.0.30-SNAPSHOT</version>
+        <version>0.0.30</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
