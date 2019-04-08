@@ -19,7 +19,7 @@
     <siesta.version>2.3.1</siesta.version>
     <resteasy.version>3.1.4.Final</resteasy.version>
     <swagger.version>1.5.16</swagger.version>
-    <jackson.version>2.9.6</jackson.version>
+    <jackson.version>2.9.8</jackson.version>
     <okhttp.version>3.10.0</okhttp.version>
     <airlift.version>0.171</airlift.version>
     <jooq.version>3.11.3</jooq.version>
