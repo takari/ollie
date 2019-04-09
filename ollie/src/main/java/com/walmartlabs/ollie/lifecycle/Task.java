@@ -1,10 +1,10 @@
-package com.walmartlabs.ollie.app;
+package com.walmartlabs.ollie.lifecycle;
 
 /*-
  * *****
  * Ollie
  * -----
- * Copyright (C) 2018 Takari
+ * Copyright (C) 2018 - 2019 Takari
  * -----
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,7 @@ package com.walmartlabs.ollie.app;
  * =====
  */
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Singleton;
-
-@Named
-@Singleton
-public class TestComponent {
+public interface Task {
+  void start();
+  void stop();
 }

@@ -32,8 +32,10 @@ import javax.servlet.Filter;
 import javax.servlet.ServletContextListener;
 import javax.servlet.http.HttpServlet;
 
-import com.walmartlabs.ollie.guice.OllieSecurityModule;
-import com.walmartlabs.ollie.guice.OllieSecurityModuleProvider;
+import com.google.common.collect.Sets;
+import com.google.inject.Injector;
+import com.walmartlabs.ollie.guice.*;
+import com.walmartlabs.ollie.lifecycle.TaskRepository;
 import org.apache.shiro.realm.Realm;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
@@ -43,7 +45,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import com.google.inject.Module;
 import com.google.inject.servlet.GuiceFilter;
-import com.walmartlabs.ollie.guice.OllieServletContextListener;
 import com.walmartlabs.ollie.model.FilterDefinition;
 import com.walmartlabs.ollie.model.ServletDefinition;
 import com.walmartlabs.ollie.model.StaticResourceDefinition;
@@ -100,15 +101,21 @@ public class OllieServerBuilder {
   boolean jmxEnabled = false;
 
   OllieSecurityModuleProvider securityModuleProvider;
+  Set<OllieShutdownListener> shutdownListeners = Sets.newHashSet();
+  TaskRepository taskRepository;
+  OllieShutdownManager shutdownManager;
 
-  public OllieServer build() {           
-    this.contextListener  = new OllieServletContextListener(this);
+  public OllieServer build() {
+    this.taskRepository = new TaskRepository();
+    this.shutdownManager = new OllieShutdownManager(this.taskRepository, this.shutdownListeners);
+    Injector injector = new InjectorBuilder(this).injector();
+    this.contextListener  = new OllieServletContextListener(this, injector);
     filter("/*").through(CrossOriginFilter.class);
     filter("/*").through(GuiceFilter.class);
     if (docs != null) {
       at(docs).resource("swagger-ui", ImmutableList.of("index.html"));
     }    
-    return new OllieServer(this);
+    return injector.getInstance(OllieServer.class);
   }
 
   public OllieServerBuilder title(String title) {
@@ -382,6 +389,15 @@ public class OllieServerBuilder {
     return this;
   }
 
+  public OllieServerBuilder shutdownListener(OllieShutdownListener listener) {
+    shutdownListeners.add(listener);
+    return this;
+  }
+
+  public Set<OllieShutdownListener> shutdownListeners() {
+    return shutdownListeners;
+  }
+
   public OllieSecurityModuleProvider securityModuleProvider() {
     return this.securityModuleProvider;
   }
@@ -393,5 +409,14 @@ public class OllieServerBuilder {
 
   public File secrets() {
     return secrets;
+  }
+
+
+  public TaskRepository taskRepository() {
+    return taskRepository;
+  }
+
+  public OllieShutdownManager shutdownManager() {
+    return shutdownManager;
   }
 }

@@ -9,9 +9,9 @@ package com.walmartlabs.ollie.app;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -48,25 +48,28 @@ public class OllieSslServerTest {
   @Test
   public void validate() throws Exception {
     server = server();
-    HttpClientConfig clientConfig = new HttpClientConfig()
-      .setKeyStorePath(getResource("clientcert-pem/client.pem").getPath())
-      .setKeyStorePassword("ollie")
-      .setTrustStorePath(getResource("clientcert-pem/ca.crt").getPath());
+    HttpClientConfig clientConfig =
+        new HttpClientConfig()
+            .setKeyStorePath(getResource("clientcert-pem/client.pem").getPath())
+            .setKeyStorePassword("ollie")
+            .setTrustStorePath(getResource("clientcert-pem/ca.crt").getPath());
     assertClientCertificateRequest(clientConfig);
     server.stop();
   }
 
   protected static OllieServer server() {
-    OllieServer server = OllieServer.builder()
-      .port(0)
-      .name("testsslserver")
-      .sslEnabled(true)
-      .keystorePath(getResource("clientcert-pem/server.pem").getPath())
-      .keystorePassword("ollie")
-      .truststorePath(getResource("clientcert-pem/ca.crt").getPath())
-      .packageToScan("com.walmartlabs.ollie.app")
-      .serve("/ssl").with(testServlet())
-      .build();
+    OllieServer server =
+        OllieServer.builder()
+            .port(0)
+            .name("testsslserver")
+            .sslEnabled(true)
+            .keystorePath(getResource("clientcert-pem/server.pem").getPath())
+            .keystorePassword("ollie")
+            .truststorePath(getResource("clientcert-pem/ca.crt").getPath())
+            .packageToScan("com.walmartlabs.ollie.app")
+            .serve("/ssl")
+            .with(testServlet())
+            .build();
     server.start();
     return server;
   }
@@ -74,7 +77,7 @@ public class OllieSslServerTest {
   protected String url(String path) {
     int port = server.port();
     return String.format("https://localhost:%s%s", port, path);
-  }  
+  }
 
   // https://stackoverflow.com/questions/24351472/getattributejavax-servlet-request-x509certificate-not-set-spring-cxf-jettaay
   // https://stackoverflow.com/questions/34486300/javax-servlet-request-x509certificate-request-attribute-does-not-return-ca-cer
@@ -82,9 +85,9 @@ public class OllieSslServerTest {
   // ^^^ this was the issue
   private void assertClientCertificateRequest(HttpClientConfig clientConfig) throws Exception {
     try (JettyHttpClient httpClient = new JettyHttpClient(clientConfig)) {
-      StringResponse response = httpClient.execute(
-        prepareGet().setUri(new URI(url("/ssl"))).build(),
-        createStringResponseHandler());
+      StringResponse response =
+          httpClient.execute(
+              prepareGet().setUri(new URI(url("/ssl"))).build(), createStringResponseHandler());
       assertEquals(response.getStatusCode(), HttpServletResponse.SC_OK);
       assertEquals(response.getBody(), "CN=testing,OU=Client,O=Ollie,L=Sunnyvale,ST=CA,C=US");
     }
@@ -94,8 +97,9 @@ public class OllieSslServerTest {
     return new HttpServlet() {
       @Override
       protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws IOException {
-        X509Certificate[] certs = (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
+          throws IOException {
+        X509Certificate[] certs =
+            (X509Certificate[]) request.getAttribute("javax.servlet.request.X509Certificate");
         if ((certs == null) || (certs.length == 0)) {
           throw new RuntimeException("No client certificate");
         }

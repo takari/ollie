@@ -1,10 +1,10 @@
-package com.walmartlabs.ollie.app;
+package com.walmartlabs.ollie.guice;
 
 /*-
  * *****
  * Ollie
  * -----
- * Copyright (C) 2018 Takari
+ * Copyright (C) 2018 - 2019 Takari
  * -----
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,11 +20,28 @@ package com.walmartlabs.ollie.app;
  * =====
  */
 
+import com.walmartlabs.ollie.lifecycle.Task;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.List;
+
+// This class serves as a place to inject server components. For reasons I've yet to determine, I can't inject these components
+// directly into the OllieServer using Injector.getClass(OllieServer.class)
 
 @Named
 @Singleton
-public class TestComponent {
+public class OllieServerComponents {
+
+  private final List<Task> tasks;
+
+  @Inject
+  public OllieServerComponents(List<Task> tasks) {
+    this.tasks = tasks;
+  }
+
+  public List<Task> tasks() {
+    return tasks;
+  }
 }
