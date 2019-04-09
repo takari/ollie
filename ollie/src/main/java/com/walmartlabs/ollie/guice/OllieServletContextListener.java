@@ -36,6 +36,7 @@ import com.walmartlabs.ollie.OllieServerBuilder;
 
 import com.walmartlabs.ollie.SessionCookieOptions;
 import com.walmartlabs.ollie.database.DatabaseModule;
+import com.walmartlabs.ollie.lifecycle.LifecycleManager;
 import org.eclipse.sisu.space.BeanScanning;
 import org.eclipse.sisu.space.SpaceModule;
 import org.eclipse.sisu.space.URLClassSpace;
@@ -59,8 +60,9 @@ public class OllieServletContextListener
   private Injector injector;
   private final OllieServerBuilder config;
 
-  public OllieServletContextListener(OllieServerBuilder config) {
+  public OllieServletContextListener(OllieServerBuilder config, Injector injector) {
     this.config = config;
+    this.injector = injector;
   }
   
   @Override
@@ -68,10 +70,6 @@ public class OllieServletContextListener
     checkNotNull(event);
     // capture the servlet context, some modules may need this and otherwise have no access to it (like shiro modules)
     servletContext = event.getServletContext();
-    // We need to set the injector here first because super.contextInitialized() will call getInjector() so if we have not retrieved
-    // our injector created elsewhere, say from a testing environment, a new one will be created and cause inconsistencies.
-    injector = (Injector) event.getServletContext().getAttribute(INJECTOR_KEY);
-
     Set<SessionCookieOptions> opts = config.sessionCookieOptions();
     SessionCookieConfig cfg = servletContext.getSessionCookieConfig();
     if (opts.contains(SessionCookieOptions.SECURE)) {
@@ -80,7 +78,6 @@ public class OllieServletContextListener
     if (opts.contains(SessionCookieOptions.HTTP_ONLY)) {
       cfg.setHttpOnly(true);
     }
-
     super.contextInitialized(event);
   }
 
@@ -90,31 +87,6 @@ public class OllieServletContextListener
 
   @Override
   protected Injector getInjector() {
-    if (injector == null) {
-      injector = createInjector();
-    }
     return injector;
-  }
-
-  protected Injector createInjector() {
-    List<Module> modules = Lists.newArrayList();
-    configureModules(modules);
-    if (log.isDebugEnabled() && !modules.isEmpty()) {
-      log.debug("Modules:");
-      for (Module module : modules) {
-        log.debug("  {}", module);
-      }
-    }
-    return Guice.createInjector(new WireModule(modules));
-  }
-
-  // TODO, these all needs to go within the space module
-  protected void configureModules(final List<Module> modules) {
-    modules.add(new SpaceModule(new URLClassSpace(getClass().getClassLoader()), BeanScanning.CACHE));
-    modules.add(new OllieServletModule(config));
-    if (config.hasDBSupport()) {
-      modules.add(new DatabaseModule(config));
-    }
-    modules.addAll(config.modules());
   }
 }

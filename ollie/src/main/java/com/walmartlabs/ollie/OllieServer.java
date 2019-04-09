@@ -40,6 +40,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import com.walmartlabs.ollie.guice.OllieServerComponents;
+import com.walmartlabs.ollie.lifecycle.Task;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -69,6 +71,8 @@ import com.walmartlabs.ollie.model.StaticResourceDefinition;
 
 import io.airlift.security.pem.PemReader;
 
+import javax.inject.Inject;
+
 // http://stackoverflow.com/questions/20043097/jetty-9-embedded-adding-handlers-during-runtime
 
 public class OllieServer {
@@ -76,27 +80,34 @@ public class OllieServer {
   private static Logger logger = LoggerFactory.getLogger(OllieServer.class);
   protected final Server server;
   private final Optional<ZonedDateTime> certificateExpiration;
+  private final OllieServerComponents components;
 
-  public OllieServer(OllieServerBuilder webServerDefinition) {
-    this.server = build(webServerDefinition);
-    this.certificateExpiration = loadAllX509Certificates(webServerDefinition).stream()
+  @Inject
+  public OllieServer(OllieServerBuilder builder, OllieServerComponents components) {
+    this.server = build(builder);
+    this.components = components;
+    this.certificateExpiration = loadAllX509Certificates(builder).stream()
       .map(X509Certificate::getNotAfter)
       .min(naturalOrder())
       .map(date -> ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()));
   }
 
-  public Server build(OllieServerBuilder config) {
+  public List<Task> tasks() {
+    return components.tasks();
+  }
+
+  public Server build(OllieServerBuilder builder) {
     logger.info("Constructing Jetty server...");
-    logger.info("maxThreads = {}", config.maxThreads);
-    logger.info("minThreads = {}", config.minThreads);
-    logger.info("port = {}", config.port);
-    QueuedThreadPool threadPool = new QueuedThreadPool(config.maxThreads);
-    threadPool.setMinThreads(config.minThreads);
+    logger.info("maxThreads = {}", builder.maxThreads);
+    logger.info("minThreads = {}", builder.minThreads);
+    logger.info("port = {}", builder.port);
+    QueuedThreadPool threadPool = new QueuedThreadPool(builder.maxThreads);
+    threadPool.setMinThreads(builder.minThreads);
     // threadPool.setIdleTimeout(Ints.checkedCast(config.getThreadMaxIdleTime().toMillis()));
     threadPool.setName("http-worker");
     Server server = new Server(threadPool);
 
-    if (config.jmxEnabled) {
+    if (builder.jmxEnabled) {
       MBeanContainer mbeanContainer = new MBeanContainer(ManagementFactory.getPlatformMBeanServer());
       server.addBean(mbeanContainer);
     }
@@ -106,44 +117,44 @@ public class OllieServer {
     baseHttpConfiguration.setSendXPoweredBy(false);
 
     ServerConnector httpsConnector;
-    if (config.sslEnabled) {
+    if (builder.sslEnabled) {
       logger.info("HTTPS connector enabled");
       HttpConfiguration httpsConfiguration = new HttpConfiguration(baseHttpConfiguration);
       httpsConfiguration.setSecureScheme("https");
-      httpsConfiguration.setSecurePort(config.port());
+      httpsConfiguration.setSecurePort(builder.port());
       httpsConfiguration.addCustomizer(new SecureRequestCustomizer());
 
       SslContextFactory sslContextFactory = new SslContextFactory();
-      Optional<KeyStore> pemKeyStore = tryLoadPemKeyStore(config);
+      Optional<KeyStore> pemKeyStore = tryLoadPemKeyStore(builder);
       if (pemKeyStore.isPresent()) {
         sslContextFactory.setKeyStore(pemKeyStore.get());
         sslContextFactory.setKeyStorePassword("");
       } else {
-        throw new RuntimeException("SSL has been configured but the keystore file cannot be loaded: " + config.keystorePath);
+        throw new RuntimeException("SSL has been configured but the keystore file cannot be loaded: " + builder.keystorePath);
       }
-      if (config.truststorePath != null) {
-        Optional<KeyStore> pemTrustStore = tryLoadPemTrustStore(config);
+      if (builder.truststorePath != null) {
+        Optional<KeyStore> pemTrustStore = tryLoadPemTrustStore(builder);
         if (pemTrustStore.isPresent()) {
           sslContextFactory.setTrustStore(pemTrustStore.get());
           sslContextFactory.setTrustStorePassword("");
         } else {
-          throw new RuntimeException("SSL has been configured but the truststore file cannot be loaded: " + config.keystorePath);
+          throw new RuntimeException("SSL has been configured but the truststore file cannot be loaded: " + builder.keystorePath);
         }
       }
 
-      List<String> includedCipherSuites = config.includedCipherSuites;
+      List<String> includedCipherSuites = builder.includedCipherSuites;
       sslContextFactory.setIncludeCipherSuites(includedCipherSuites.toArray(new String[includedCipherSuites.size()]));
-      List<String> excludedCipherSuites = config.excludedCipherSuites;
+      List<String> excludedCipherSuites = builder.excludedCipherSuites;
       sslContextFactory.setExcludeCipherSuites(excludedCipherSuites.toArray(new String[excludedCipherSuites.size()]));
-      sslContextFactory.setSecureRandomAlgorithm(config.secureRandomAlgorithm);
+      sslContextFactory.setSecureRandomAlgorithm(builder.secureRandomAlgorithm);
       sslContextFactory.setWantClientAuth(true);
-      sslContextFactory.setSslSessionTimeout((int) config.sslSessionTimeout);
-      sslContextFactory.setSslSessionCacheSize(config.sslSessionCacheSize);
+      sslContextFactory.setSslSessionTimeout((int) builder.sslSessionTimeout);
+      sslContextFactory.setSslSessionCacheSize(builder.sslSessionCacheSize);
       SslConnectionFactory sslConnectionFactory = new SslConnectionFactory(sslContextFactory, "http/1.1");
 
       httpsConnector = new ServerConnector(server, sslConnectionFactory, new HttpConnectionFactory(httpsConfiguration));
       httpsConnector.setName("https");
-      httpsConnector.setPort(config.port);
+      httpsConnector.setPort(builder.port);
       //httpsConnector.setIdleTimeout(config.getNetworkMaxIdleTime().toMillis());
       //httpsConnector.setHost(nodeInfo.getBindIp().getHostAddress());
       //httpsConnector.setAcceptQueueSize(config.getHttpAcceptQueueSize());
@@ -152,11 +163,11 @@ public class OllieServer {
     }
 
     ServerConnector httpConnector;
-    if (!config.sslEnabled()) {
+    if (!builder.sslEnabled()) {
       logger.info("HTTP connector enabled.");
       httpConnector = new ServerConnector(server, new HttpConnectionFactory(baseHttpConfiguration));
       httpConnector.setName("http");
-      httpConnector.setPort(config.port);
+      httpConnector.setPort(builder.port);
       // httpConnector.setIdleTimeout(config.getNetworkMaxIdleTime().toMillis());
       // httpConnector.setHost(nodeInfo.getBindIp().getHostAddress());
       server.addConnector(httpConnector);
@@ -164,9 +175,9 @@ public class OllieServer {
 
     ContextHandlerCollection contextHandlerCollection = new ContextHandlerCollection();
 
-    if (config.staticContentDefinitions.size() > 0) {
+    if (builder.staticContentDefinitions.size() > 0) {
       logger.info("Setting up static resources handlers.");
-      for (StaticResourceDefinition definition : config.staticContentDefinitions) {
+      for (StaticResourceDefinition definition : builder.staticContentDefinitions) {
         String[] welcomeFiles = definition.getWelcomeFiles().toArray(new String[0]);
         File fileResourcePath = new File(definition.getResource());
         if (fileResourcePath.exists()) {
@@ -178,27 +189,27 @@ public class OllieServer {
     }
 
     int options = ServletContextHandler.NO_SESSIONS;
-    if (config.sessionsEnabled) {
+    if (builder.sessionsEnabled) {
       logger.info("Enabling session support.");
       options |= ServletContextHandler.SESSIONS;
     }
 
     ServletContextHandler applicationContext = new ServletContextHandler(options);
 
-    if (config.sessionMaxInactiveInterval > 0) {
-      logger.info("Setting max inactive interval for sessions: {}s.", config.sessionMaxInactiveInterval);
+    if (builder.sessionMaxInactiveInterval > 0) {
+      logger.info("Setting max inactive interval for sessions: {}s.", builder.sessionMaxInactiveInterval);
       SessionHandler sessionHandler = applicationContext.getSessionHandler();
-      sessionHandler.setMaxInactiveInterval(config.sessionMaxInactiveInterval);
+      sessionHandler.setMaxInactiveInterval(builder.sessionMaxInactiveInterval);
     }
 
-    if (config.contextListener != null) {
-      logger.info("Adding context listener {}.", config.contextListener.getClass().getName());
-      applicationContext.addEventListener(config.contextListener);
+    if (builder.contextListener != null) {
+      logger.info("Adding context listener {}.", builder.contextListener.getClass().getName());
+      applicationContext.addEventListener(builder.contextListener);
     }
 
-    if (config.filterDefintions.size() > 0) {
+    if (builder.filterDefintions.size() > 0) {
       logger.info("Setting up servlet filters.");      
-      for (FilterDefinition filterDefinition : config.filterDefintions) {
+      for (FilterDefinition filterDefinition : builder.filterDefintions) {
         String[] patterns = filterDefinition.getPatterns();
         for (String pattern : patterns) {
           logger.info("Filter {} -> {}.", pattern, filterDefinition.getFilterClass());
@@ -207,9 +218,9 @@ public class OllieServer {
       }
     }
 
-    if (config.servletDefinitions.size() > 0) {
+    if (builder.servletDefinitions.size() > 0) {
       logger.info("Setting up servlets.");
-      for (ServletDefinition servletDefinition : config.servletDefinitions) {
+      for (ServletDefinition servletDefinition : builder.servletDefinitions) {
         if (servletDefinition.getWar() != null) {
           WebAppContext webapp = new WebAppContext(applicationContext, servletDefinition.getWar().getAbsolutePath(), servletDefinition.getPattern());
           if (servletDefinition.getSecurityHandler() != null) {
