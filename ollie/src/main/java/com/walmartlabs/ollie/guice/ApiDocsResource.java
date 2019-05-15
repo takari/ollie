@@ -55,7 +55,7 @@ public class ApiDocsResource implements Resource {
   public ApiDocsResource(JaxRsClasses holder, HttpServletRequest request, OllieServerBuilder config) {
     swagger = new Swagger();
     swagger.setSchemes(ImmutableList.of(Scheme.forValue(request.getScheme())));
-    swagger.setHost(String.format("%s://%s:%s", request.getScheme(), request.getServerName(), request.getLocalPort()));
+    swagger.setHost(String.format("%s:%s", request.getServerName(), request.getLocalPort()));
     swagger.setBasePath(config.api());
     
     Info info = new Info();    
@@ -70,7 +70,7 @@ public class ApiDocsResource implements Resource {
 
   @GET
   @Produces(MediaType.APPLICATION_JSON)
-  public Response getServiceListing() throws IOException {
+  public Response getServiceListing() {
     return Response.ok().entity(swagger).build();
   }
 }
