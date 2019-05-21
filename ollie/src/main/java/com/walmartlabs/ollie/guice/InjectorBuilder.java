@@ -35,15 +35,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class InjectorBuilder {
 
   protected final Logger log = LoggerFactory.getLogger(getClass());
 
   private final OllieServerBuilder builder;
+  private final ExecutorService executor;
 
-  public InjectorBuilder(OllieServerBuilder config) {
+  public InjectorBuilder(OllieServerBuilder config, ExecutorService executor) {
     this.builder = config;
+    this.executor = executor;
   }
 
   public Injector injector() {
@@ -60,12 +64,10 @@ public class InjectorBuilder {
 
   // TODO, these all needs to go within the space module
   protected void configureModules(final List<Module> modules) {
-    modules.add(new Module() {
-      @Override
-      public void configure(Binder binder) {
-        binder.bind(OllieServerBuilder.class).toInstance(builder);
-        binder.bind(OllieServerComponents.class);
-      }
+    modules.add(binder -> {
+      binder.bind(OllieServerBuilder.class).toInstance(builder);
+      binder.bind(OllieServerComponents.class);
+      binder.bind(ExecutorService.class).toInstance(executor);
     });
     modules.add(new SpaceModule(new URLClassSpace(getClass().getClassLoader()), BeanScanning.CACHE));
     modules.add(new OllieServletModule(builder));

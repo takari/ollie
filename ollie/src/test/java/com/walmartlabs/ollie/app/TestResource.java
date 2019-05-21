@@ -30,15 +30,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 
-import com.walmartlabs.ollie.lifecycle.Task;
 import org.sonatype.siesta.Resource;
 
 import com.walmartlabs.ollie.config.Config;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-
-import java.util.List;
 
 @Named
 @Singleton

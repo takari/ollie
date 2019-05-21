@@ -41,7 +41,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import com.walmartlabs.ollie.guice.OllieServerComponents;
-import com.walmartlabs.ollie.lifecycle.Task;
+import com.walmartlabs.ollie.lifecycle.Lifecycle;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -90,9 +90,15 @@ public class OllieServer {
       .map(X509Certificate::getNotAfter)
       .min(naturalOrder())
       .map(date -> ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()));
+
+    // Trigger the execution of the tasks. Hopefully there is a more elegant way in Guice to trigger
+    // the scanning an discovery of instances we want managed by a ProvisionerListener
+    for(Lifecycle task : components.tasks()) {
+      task.toString();
+    }
   }
 
-  public List<Task> tasks() {
+  public List<Lifecycle> tasks() {
     return components.tasks();
   }
 

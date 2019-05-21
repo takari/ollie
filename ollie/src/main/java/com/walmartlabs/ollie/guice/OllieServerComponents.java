@@ -20,7 +20,7 @@ package com.walmartlabs.ollie.guice;
  * =====
  */
 
-import com.walmartlabs.ollie.lifecycle.Task;
+import com.walmartlabs.ollie.lifecycle.Lifecycle;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -34,14 +34,14 @@ import java.util.List;
 @Singleton
 public class OllieServerComponents {
 
-  private final List<Task> tasks;
+  private final List<Lifecycle> tasks;
 
   @Inject
-  public OllieServerComponents(List<Task> tasks) {
+  public OllieServerComponents(List<Lifecycle> tasks) {
     this.tasks = tasks;
   }
 
-  public List<Task> tasks() {
+  public List<Lifecycle> tasks() {
     return tasks;
   }
 }

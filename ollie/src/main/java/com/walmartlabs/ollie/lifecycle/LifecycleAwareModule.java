@@ -27,16 +27,16 @@ import com.google.inject.matcher.Matchers;
 public class LifecycleAwareModule extends AbstractModule {
 
   private final Module module;
-  private final TaskRepository repository;
+  private final LifecycleRepository repository;
 
-  protected LifecycleAwareModule(TaskRepository repository, Module module) {
+  protected LifecycleAwareModule(LifecycleRepository repository, Module module) {
     this.repository = repository;
     this.module = module;
   }
 
   @Override
   protected void configure() {
-    bindListener(Matchers.any(), new TaskListener(repository));
+    bindListener(Matchers.any(), new LifecycleProvisionListener(repository));
     install(module);
   }
 }

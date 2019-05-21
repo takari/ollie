@@ -26,6 +26,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.Filter;
@@ -35,7 +37,7 @@ import javax.servlet.http.HttpServlet;
 import com.google.common.collect.Sets;
 import com.google.inject.Injector;
 import com.walmartlabs.ollie.guice.*;
-import com.walmartlabs.ollie.lifecycle.TaskRepository;
+import com.walmartlabs.ollie.lifecycle.LifecycleRepository;
 import org.apache.shiro.realm.Realm;
 import org.eclipse.jetty.security.SecurityHandler;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
@@ -102,13 +104,15 @@ public class OllieServerBuilder {
 
   OllieSecurityModuleProvider securityModuleProvider;
   Set<OllieShutdownListener> shutdownListeners = Sets.newHashSet();
-  TaskRepository taskRepository;
+  ExecutorService executor;
+  LifecycleRepository taskRepository;
   OllieShutdownManager shutdownManager;
 
   public OllieServer build() {
-    this.taskRepository = new TaskRepository();
+    this.executor = Executors.newCachedThreadPool();
+    this.taskRepository = new LifecycleRepository(executor);
     this.shutdownManager = new OllieShutdownManager(this.taskRepository, this.shutdownListeners);
-    Injector injector = new InjectorBuilder(this).injector();
+    Injector injector = new InjectorBuilder(this, executor).injector();
     this.contextListener  = new OllieServletContextListener(this, injector);
     filter("/*").through(CrossOriginFilter.class);
     filter("/*").through(GuiceFilter.class);
@@ -411,8 +415,7 @@ public class OllieServerBuilder {
     return secrets;
   }
 
-
-  public TaskRepository taskRepository() {
+  public LifecycleRepository taskRepository() {
     return taskRepository;
   }
 

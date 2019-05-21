@@ -20,8 +20,8 @@ package com.walmartlabs.ollie.guice;
  * =====
  */
 
-import com.walmartlabs.ollie.lifecycle.Task;
-import com.walmartlabs.ollie.lifecycle.TaskRepository;
+import com.walmartlabs.ollie.lifecycle.Lifecycle;
+import com.walmartlabs.ollie.lifecycle.LifecycleRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,18 +29,18 @@ import java.util.Set;
 
 public class OllieShutdownManager {
 
-  private static final Logger logger = LoggerFactory.getLogger(TaskRepository.class);
-  private final TaskRepository taskRepository;
+  private static final Logger logger = LoggerFactory.getLogger(LifecycleRepository.class);
+  private final LifecycleRepository taskRepository;
   private final Set<OllieShutdownListener> listeners;
 
-  public OllieShutdownManager(TaskRepository taskRepository, Set<OllieShutdownListener> listeners) {
+  public OllieShutdownManager(LifecycleRepository taskRepository, Set<OllieShutdownListener> listeners) {
     this.taskRepository = taskRepository;
     this.listeners = listeners;
   }
 
   public synchronized void shutdown() {
 
-    for (Task task : taskRepository.tasks()) {
+    for (Lifecycle task : taskRepository.tasks()) {
       logger.info("Stopping {}", task.getClass().getName());
       task.stop();
     }

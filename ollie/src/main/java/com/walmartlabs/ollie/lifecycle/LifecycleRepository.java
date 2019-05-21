@@ -25,21 +25,28 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
 
-public class TaskRepository {
+public class LifecycleRepository {
 
-  private static final Logger logger = LoggerFactory.getLogger(TaskRepository.class);
+  private static final Logger logger = LoggerFactory.getLogger(LifecycleRepository.class);
 
-  private final Set<Task> tasks = Sets.newConcurrentHashSet();
+  private final ExecutorService executor;
+  private final Set<Lifecycle> tasks = Sets.newConcurrentHashSet();
 
-  public Set<Task> tasks() {
+  public LifecycleRepository(ExecutorService executor) {
+    this.executor = executor;
+  }
+
+  public Set<Lifecycle> tasks() {
     return tasks;
   }
 
-  public void register(Task task) {
+  public void register(Lifecycle task) {
     if (tasks.add(task)) {
-      logger.info("Starting {} and registering for shutdown.", task.getClass().getName());
-      task.start();
+      logger.info("Starting {} and registering for lifecycle management.", task.getClass().getName());
+      executor.submit(() -> task.start());
     }
   }
 
@@ -50,5 +57,13 @@ public class TaskRepository {
           task.stop();
         });
     tasks.clear();
+    executor.shutdown();
+    try {
+      if (!executor.awaitTermination(800, TimeUnit.MILLISECONDS)) {
+        executor.shutdownNow();
+      }
+    } catch (InterruptedException e) {
+      executor.shutdownNow();
+    }
   }
 }

@@ -20,10 +20,8 @@ package com.walmartlabs.ollie.app;
  * =====
  */
 
-import com.walmartlabs.ollie.lifecycle.Task;
+import com.walmartlabs.ollie.lifecycle.Lifecycle;
 import org.eclipse.sisu.Priority;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -31,7 +29,7 @@ import javax.inject.Singleton;
 @Named
 @Singleton
 @Priority(10)
-public class TestTask implements Task {
+public class TestTaskWithHighPriority implements Lifecycle {
 
   public boolean start;
   public boolean stop;

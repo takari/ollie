@@ -28,19 +28,19 @@ import com.google.inject.spi.ProvisionListener;
 import javax.inject.Singleton;
 import java.lang.annotation.Annotation;
 
-public class TaskListener implements ProvisionListener {
+public class LifecycleProvisionListener implements ProvisionListener {
 
-    private final TaskRepository repository;
+    private final LifecycleRepository repository;
 
-    public TaskListener(TaskRepository repo) {
+    public LifecycleProvisionListener(LifecycleRepository repo) {
         this.repository = repo;
     }
 
     @Override
     public <T> void onProvision(ProvisionInvocation<T> provisionInvocation) {
         T provision = provisionInvocation.provision();
-        if (provision instanceof Task && shouldManage(provisionInvocation)) {
-            repository.register((Task) provision);
+        if (provision instanceof Lifecycle && shouldManage(provisionInvocation)) {
+            repository.register((Lifecycle) provision);
         }
     }
 

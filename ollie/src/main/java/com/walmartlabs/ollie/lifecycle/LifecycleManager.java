@@ -44,7 +44,7 @@ public class LifecycleManager {
     return injector;
   }
 
-  private static Module enableLifeCycleManagement(TaskRepository repository, Module module) {
+  private static Module enableLifeCycleManagement(LifecycleRepository repository, Module module) {
     return new LifecycleAwareModule(repository, module);
   }
 }

@@ -57,7 +57,7 @@ public class ApiDocsResource implements Resource {
     swagger.setSchemes(ImmutableList.of(Scheme.forValue(request.getScheme())));
     swagger.setHost(String.format("%s:%s", request.getServerName(), request.getLocalPort()));
     swagger.setBasePath(config.api());
-    
+
     Info info = new Info();    
     info.setVersion("1.0.0");
     info.setTitle(config.title());

@@ -20,7 +20,7 @@ package com.walmartlabs.ollie.lifecycle;
  * =====
  */
 
-public interface Task {
+public interface Lifecycle {
   void start();
   void stop();
 }

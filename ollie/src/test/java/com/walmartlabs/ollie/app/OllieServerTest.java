@@ -30,42 +30,44 @@ import static org.junit.Assert.assertTrue;
 
 public class OllieServerTest extends AbstractOllieServerTest {
 
-  @Test
-  public void validate() {
-    // TestResource
-    when()
-        .get(url("/api/test?name=ollie"))
-        .then()
-        .body(
-            "name",
-            equalTo("ollie"),
-            "stringConfig",
-            equalTo("resource-config-string"),
-            "integerConfig",
-            equalTo(1),
-            "floatConfig",
-            equalTo(2.5f),
-            "jiraPassword",
-            equalTo("super-secret"));
+    @Test
+    public void validate() {
+        // TestResource
+        when()
+                .get(url("/api/test?name=ollie"))
+                .then()
+                .body(
+                        "name",
+                        equalTo("ollie"),
+                        "stringConfig",
+                        equalTo("resource-config-string"),
+                        "integerConfig",
+                        equalTo(1),
+                        "floatConfig",
+                        equalTo(2.5f),
+                        "jiraPassword",
+                        equalTo("super-secret"));
 
-    // TestServlet
-    when().get(url("/testservlet")).then().body(containsString("servlet-config-string"));
-    // Swagger
-    when().get(url("/api/docs")).then().body("swagger", equalTo("2.0"));
-  }
+        // TestServlet
+        when().get(url("/testservlet")).then().body(containsString("servlet-config-string"));
+        // Swagger
+        when().get(url("/api/docs")).then().body("swagger", equalTo("2.0"));
+    }
 
-  @Test
-  public void validateServerComponent() {
-    assertEquals(1, server.tasks().size());
-    assertTrue(((TestTask) server.tasks().get(0)).start);
+    @Test
+    public void validateServerComponent() {
+        assertEquals(2, server.tasks().size());
+        assertTrue(((TestTaskWithHighPriority) server.tasks().get(0)).start);
+        assertTrue(((TestTaskWithLowPriority) server.tasks().get(1)).start);
 
-    // Need to find a better way to hide this during testing. The shutdown hook will be called during normal
-    // JVM operations when a SIGTERM occurs but during testing we need to have our shutdown manager called
-    // sooner than that so we can verify it has run correctly.
-    builder.shutdownManager().shutdown();
+        // Need to find a better way to hide this during testing. The shutdown hook will be called during normal
+        // JVM operations when a SIGTERM occurs but during testing we need to have our shutdown manager called
+        // sooner than that so we can verify it has run correctly.
+        builder.shutdownManager().shutdown();
 
-    // In our case here we manually triggered the shutdown manager which will run Task::stop on all
-    // our tasks. For our TestTask it will set the public field stop to true.
-    assertTrue(((TestTask)server.tasks().get(0)).stop);
-  }
+        // In our case here we manually triggered the shutdown manager which will run Lifecycle::stop on all
+        // our tasks. For our TestTask it will set the public field stop to true.
+        assertTrue(((TestTaskWithHighPriority) server.tasks().get(0)).stop);
+        assertTrue(((TestTaskWithLowPriority) server.tasks().get(1)).stop);
+    }
 }
