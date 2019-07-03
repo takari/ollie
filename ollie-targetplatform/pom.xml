@@ -28,7 +28,9 @@
     <postgres.version>42.2.5</postgres.version>
     <metrics.version>3.2.2</metrics.version>
     <h2.version>1.4.197</h2.version>
-
+    <prometheus.simpleclient.version>0.6.0</prometheus.simpleclient.version>
+    <jsr305.version>3.0.2</jsr305.version>
+    <immutables.version>2.7.5</immutables.version>
   </properties>
 
   <dependencyManagement>
@@ -175,6 +177,39 @@
         <groupId>com.fasterxml.jackson.dataformat</groupId>
         <artifactId>jackson-dataformat-yaml</artifactId>
         <version>${jackson.version}</version>
+      </dependency>
+      <!-- Prometheus integration -->
+      <dependency>
+        <groupId>io.prometheus</groupId>
+        <artifactId>simpleclient</artifactId>
+        <version>${prometheus.simpleclient.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.prometheus</groupId>
+        <artifactId>simpleclient_dropwizard</artifactId>
+        <version>${prometheus.simpleclient.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.prometheus</groupId>
+        <artifactId>simpleclient_servlet</artifactId>
+        <version>${prometheus.simpleclient.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>io.prometheus</groupId>
+        <artifactId>simpleclient_hotspot</artifactId>
+        <version>${prometheus.simpleclient.version}</version>
+      </dependency>
+      <!-- Findbugs -->
+      <dependency>
+        <groupId>com.google.code.findbugs</groupId>
+        <artifactId>jsr305</artifactId>
+        <version>${jsr305.version}</version>
+      </dependency>
+      <!-- Immutables -->
+      <dependency>
+        <groupId>org.immutables</groupId>
+        <artifactId>value</artifactId>
+        <version>${immutables.version}</version>
       </dependency>
       <!-- YAML -->
       <dependency>
