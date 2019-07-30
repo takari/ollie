@@ -138,7 +138,7 @@ public class ConfigurationProcessor {
       result = result.resolveWith(secrets);
     }
 
-    return result;
+    return result.resolve();
   }
 
   // Eventually we might do this to perform more complicated lookups in remote systems
