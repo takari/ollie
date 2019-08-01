@@ -60,7 +60,7 @@ public class DatabaseModule extends AbstractModule {
     private String DB_CHANGELOG_LOG_TABLE;
     private String DB_CHANGELOG_LOCK_TABLE;
 
-    private static final String AUTO_MIGRATE_KEY = "ollie.db.autoMigrate";
+    public static final String AUTO_MIGRATE_KEY = "ollie.db.autoMigrate";
 
     private final Config config;
 
