@@ -11,7 +11,7 @@
   <version>0.0.32-SNAPSHOT</version>
   <name>Ollie :: Parent</name>
   <packaging>pom</packaging>
-  
+
   <licenses>
     <license>
       <name>Apache License, Version 2.0</name>
@@ -27,142 +27,15 @@
     <maven.compiler.target>${takari.javaSourceVersion}</maven.compiler.target>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-
-    <!--DB configuration -->
-    <db.username>sa</db.username>
-    <db.password />
-    <db.driver>org.h2.Driver</db.driver>
-    <db.schema>PUBLIC</db.schema>
-    <db.changeLogPath>liquibase.xml</db.changeLogPath>
-    <db.url>jdbc:h2:${basedir}/target/ollie-db-codegen;DATABASE_TO_UPPER=false</db.url>
-
-    <db.host>localhost</db.host>
-    <db.port>5432</db.port>
-
-    <!-- only necessary if using docker plugin for jooq code gen -->
-    <db.image>postgres:10</db.image>
-    <network.mode>bridge</network.mode>
-    <network.name>bridge</network.name>
-
-    <!-- plugin versions -->
-    <liquibase.version>3.5.1</liquibase.version>
-    <jooq.version>3.11.5</jooq.version>
   </properties>
 
   <modules>
     <module>ollie</module>
-    <module>ollie-configuration</module>    
+    <module>ollie-configuration</module>
     <module>ollie-targetplatform</module>
-    <module>examples</module>
   </modules>
 
-
   <build>
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>io.fabric8</groupId>
-          <artifactId>docker-maven-plugin</artifactId>
-          <extensions>true</extensions>
-          <executions>
-            <execution>
-              <id>start</id>
-              <phase>generate-sources</phase>
-              <goals>
-                <goal>start</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>stop</id>
-              <phase>process-test-resources</phase>
-              <goals>
-                <goal>stop</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <images>
-              <image>
-                <name>${db.image}</name>
-                <alias>db</alias>
-                <run>
-                  <ports>
-                    <port>${db.port}:5432</port>
-                  </ports>
-                  <env>
-                    <POSTGRES_PASSWORD>${db.password}</POSTGRES_PASSWORD>
-                  </env>
-                  <network>
-                    <mode>${network.mode}</mode>
-                    <name>${network.name}</name>
-                    <alias>db</alias>
-                  </network>
-                  <wait>
-                    <log>(?s).*ready for start up.*ready to accept connections.*</log>
-                    <time>30000</time>
-                  </wait>
-                </run>
-              </image>
-            </images>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.liquibase</groupId>
-          <artifactId>liquibase-maven-plugin</artifactId>
-          <version>${liquibase.version}</version>
-          <executions>
-            <execution>
-              <phase>generate-sources</phase>
-              <goals>
-                <goal>update</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <changeLogFile>src/main/resources/${db.changeLogPath}</changeLogFile>
-            <driver>${db.driver}</driver>
-            <url>${db.url}</url>
-            <username>${db.username}</username>
-            <password>${db.password}</password>
-            <promptOnNonLocalDatabase>false</promptOnNonLocalDatabase>
-          </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.jooq</groupId>
-          <artifactId>jooq-codegen-maven</artifactId>
-          <version>${jooq.version}</version>
-          <executions>
-            <execution>
-              <phase>generate-sources</phase>
-              <goals>
-                <goal>generate</goal>
-              </goals>
-            </execution>
-          </executions>
-          <configuration>
-            <logging>WARN</logging>
-            <jdbc>
-              <driver>${db.driver}</driver>
-              <url>${db.url}</url>
-              <user>${db.username}</user>
-              <password>${db.password}</password>
-            </jdbc>
-            <generator>
-              <database>
-                <inputSchema>${db.schema}</inputSchema>
-                <includes>.*</includes>
-                <excludes>DATABASECHANGELOG.*</excludes>
-              </database>
-              <target>
-                <packageName>com.walmartlabs.persistence.jooq</packageName>
-                <directory>target/generated-sources/persistence-jooq</directory>
-              </target>
-            </generator>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
-
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
