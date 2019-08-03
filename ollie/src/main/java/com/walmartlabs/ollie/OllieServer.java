@@ -77,6 +77,10 @@ import javax.inject.Inject;
 
 public class OllieServer {
 
+  public static final String DATABASE_CHANGELOG_RESOURCE = "liquibase.xml";
+  public static final String DATABASE_CHANGELOG_TABLE_NAME = "databasechangelog";
+  public static final String DATABASE_CHANGELOG_LOCK_TABLE_NAME = "databasechangeloglock";
+
   private static Logger logger = LoggerFactory.getLogger(OllieServer.class);
   protected final Server server;
   private final Optional<ZonedDateTime> certificateExpiration;
