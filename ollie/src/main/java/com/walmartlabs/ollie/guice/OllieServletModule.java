@@ -26,12 +26,16 @@ import com.google.inject.servlet.ServletModule;
 import com.walmartlabs.ollie.OllieServerBuilder;
 import com.walmartlabs.ollie.config.OllieConfigurationModule;
 
+import javax.servlet.ServletContext;
+
 public class OllieServletModule extends ServletModule {
 
   private final OllieServerBuilder serverConfiguration;
+  private final ServletContext servletContext;
 
-  public OllieServletModule(OllieServerBuilder config) {
+  public OllieServletModule(OllieServerBuilder config, ServletContext servletContext) {
     this.serverConfiguration = config;
+    this.servletContext = servletContext;
   }
       
   @Override
@@ -51,6 +55,6 @@ public class OllieServletModule extends ServletModule {
     if (securityModuleProvider == null) {
       securityModuleProvider = OllieSecurityModule::new;
     }
-    install(securityModuleProvider.get(serverConfiguration, getServletContext()));
+    install(securityModuleProvider.get(serverConfiguration, servletContext));
   }
 }

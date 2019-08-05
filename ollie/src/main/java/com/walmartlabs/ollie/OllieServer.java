@@ -39,9 +39,14 @@ import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-import com.walmartlabs.ollie.guice.OllieServerComponents;
+import com.google.common.collect.Sets;
+import com.google.inject.Injector;
+import com.walmartlabs.ollie.guice.*;
 import com.walmartlabs.ollie.lifecycle.Lifecycle;
+import com.walmartlabs.ollie.lifecycle.LifecycleRepository;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -72,6 +77,9 @@ import com.walmartlabs.ollie.model.StaticResourceDefinition;
 import io.airlift.security.pem.PemReader;
 
 import javax.inject.Inject;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextListener;
+import javax.servlet.SessionCookieConfig;
 
 // http://stackoverflow.com/questions/20043097/jetty-9-embedded-adding-handlers-during-runtime
 
@@ -84,22 +92,17 @@ public class OllieServer {
   private static Logger logger = LoggerFactory.getLogger(OllieServer.class);
   protected final Server server;
   private final Optional<ZonedDateTime> certificateExpiration;
-  private final OllieServerComponents components;
 
-  @Inject
-  public OllieServer(OllieServerBuilder builder, OllieServerComponents components) {
+  // Need to share for testing
+  OllieShutdownManager shutdownManager;
+  OllieServerComponents components;
+
+  public OllieServer(OllieServerBuilder builder) {
     this.server = build(builder);
-    this.components = components;
     this.certificateExpiration = loadAllX509Certificates(builder).stream()
       .map(X509Certificate::getNotAfter)
       .min(naturalOrder())
       .map(date -> ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()));
-
-    // Trigger the execution of the tasks. Hopefully there is a more elegant way in Guice to trigger
-    // the scanning an discovery of instances we want managed by a ProvisionerListener
-    for(Lifecycle task : components.tasks()) {
-      task.toString();
-    }
   }
 
   public List<Lifecycle> tasks() {
@@ -212,9 +215,32 @@ public class OllieServer {
       sessionHandler.setMaxInactiveInterval(builder.sessionMaxInactiveInterval);
     }
 
-    if (builder.contextListener != null) {
-      logger.info("Adding context listener {}.", builder.contextListener.getClass().getName());
-      applicationContext.addEventListener(builder.contextListener);
+    ServletContext servletContext = applicationContext.getServletContext();
+    ExecutorService executor = Executors.newCachedThreadPool();
+    LifecycleRepository taskRepository = new LifecycleRepository(executor);
+    shutdownManager = new OllieShutdownManager(taskRepository, builder.shutdownListeners);
+    Injector injector = new InjectorBuilder(builder, executor, taskRepository, servletContext, shutdownManager).injector();
+    ServletContextListener contextListener  = null;
+
+    components = injector.getInstance(OllieServerComponents.class);
+    // Trigger the execution of the tasks. Hopefully there is a more elegant way in Guice to trigger
+    // the scanning an discovery of instances we want managed by a ProvisionerListener
+    for(Lifecycle task : components.tasks()) {
+      task.toString();
+    }
+
+    Set<SessionCookieOptions> opts = builder.sessionCookieOptions();
+    SessionCookieConfig cfg = servletContext.getSessionCookieConfig();
+    if (opts.contains(SessionCookieOptions.SECURE)) {
+      cfg.setSecure(true);
+    }
+    if (opts.contains(SessionCookieOptions.HTTP_ONLY)) {
+      cfg.setHttpOnly(true);
+    }
+
+    if (contextListener != null) {
+      logger.info("Adding context listener {}.", contextListener.getClass().getName());
+      applicationContext.addEventListener(contextListener);
     }
 
     if (builder.filterDefintions.size() > 0) {
@@ -378,5 +404,9 @@ public class OllieServer {
 
   public static OllieServerBuilder builder() {
     return new OllieServerBuilder();
+  }
+
+  public OllieShutdownManager shutdownManager() {
+    return shutdownManager;
   }
 }

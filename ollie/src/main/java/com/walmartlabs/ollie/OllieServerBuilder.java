@@ -86,7 +86,6 @@ public class OllieServerBuilder {
   List<FilterDefinition> filterDefintions = Lists.newArrayList();
   List<ServletDefinition> servletDefinitions = Lists.newArrayList();
   List<StaticResourceDefinition> staticContentDefinitions = Lists.newArrayList();
-  ServletContextListener contextListener;  
   //
   String keystorePath;
   String keystorePassword;
@@ -104,22 +103,14 @@ public class OllieServerBuilder {
 
   OllieSecurityModuleProvider securityModuleProvider;
   Set<OllieShutdownListener> shutdownListeners = Sets.newHashSet();
-  ExecutorService executor;
-  LifecycleRepository taskRepository;
-  OllieShutdownManager shutdownManager;
 
   public OllieServer build() {
-    this.executor = Executors.newCachedThreadPool();
-    this.taskRepository = new LifecycleRepository(executor);
-    this.shutdownManager = new OllieShutdownManager(this.taskRepository, this.shutdownListeners);
-    Injector injector = new InjectorBuilder(this, executor).injector();
-    this.contextListener  = new OllieServletContextListener(this, injector);
     filter("/*").through(CrossOriginFilter.class);
     filter("/*").through(GuiceFilter.class);
     if (docs != null) {
       at(docs).resource("swagger-ui", ImmutableList.of("index.html"));
-    }    
-    return injector.getInstance(OllieServer.class);
+    }
+    return new OllieServer(this);
   }
 
   public OllieServerBuilder title(String title) {
@@ -413,13 +404,5 @@ public class OllieServerBuilder {
 
   public File secrets() {
     return secrets;
-  }
-
-  public LifecycleRepository taskRepository() {
-    return taskRepository;
-  }
-
-  public OllieShutdownManager shutdownManager() {
-    return shutdownManager;
   }
 }

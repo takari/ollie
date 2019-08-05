@@ -24,21 +24,17 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
 import com.walmartlabs.ollie.OllieServerBuilder;
+import com.walmartlabs.ollie.guice.OllieShutdownManager;
 
 public class LifecycleManager {
 
   private final OllieServerBuilder builder;
   private final Injector injector;
 
-  public LifecycleManager(Module module, OllieServerBuilder builder) {
+  public LifecycleManager(Module module, OllieServerBuilder builder, LifecycleRepository taskRepository, OllieShutdownManager shutdownManager) {
     this.builder = builder;
-    this.injector = Guice.createInjector(enableLifeCycleManagement(builder.taskRepository(), module));
-    addShutdownHook();
-  }
-
-  private void addShutdownHook() {
-    Runtime.getRuntime().addShutdownHook(new Thread(builder.shutdownManager()::shutdown));
-  }
+    this.injector = Guice.createInjector(enableLifeCycleManagement(taskRepository, module));
+    Runtime.getRuntime().addShutdownHook(new Thread(shutdownManager::shutdown));  }
 
   public Injector injector() {
     return injector;

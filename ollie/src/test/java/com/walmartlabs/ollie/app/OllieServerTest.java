@@ -63,7 +63,7 @@ public class OllieServerTest extends AbstractOllieServerTest {
         // Need to find a better way to hide this during testing. The shutdown hook will be called during normal
         // JVM operations when a SIGTERM occurs but during testing we need to have our shutdown manager called
         // sooner than that so we can verify it has run correctly.
-        builder.shutdownManager().shutdown();
+        server.shutdownManager().shutdown();
 
         // In our case here we manually triggered the shutdown manager which will run Lifecycle::stop on all
         // our tasks. For our TestTask it will set the public field stop to true.
