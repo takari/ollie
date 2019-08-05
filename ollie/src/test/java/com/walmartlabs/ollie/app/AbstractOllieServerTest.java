@@ -63,6 +63,7 @@ public abstract class AbstractOllieServerTest {
             .name("testserver")
             .packageToScan("com.walmartlabs.ollie.app")
             .secrets(file("secrets.properties"))
+            .serveWebServlets("/servlets")
             .serve("/testservlet")
             .with(
                 TestServlet.class,

@@ -103,6 +103,7 @@ public class OllieServerBuilder {
 
   OllieSecurityModuleProvider securityModuleProvider;
   Set<OllieShutdownListener> shutdownListeners = Sets.newHashSet();
+  private String webServletsPath;
 
   public OllieServer build() {
     filter("/*").through(CrossOriginFilter.class);
@@ -404,5 +405,14 @@ public class OllieServerBuilder {
 
   public File secrets() {
     return secrets;
+  }
+
+  public OllieServerBuilder serveWebServlets(String webServletsPath) {
+    this.webServletsPath = webServletsPath;
+    return this;
+  }
+
+  public String webServletsPath() {
+    return webServletsPath;
   }
 }

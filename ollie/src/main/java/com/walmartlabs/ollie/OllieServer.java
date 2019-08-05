@@ -47,6 +47,7 @@ import com.google.inject.Injector;
 import com.walmartlabs.ollie.guice.*;
 import com.walmartlabs.ollie.lifecycle.Lifecycle;
 import com.walmartlabs.ollie.lifecycle.LifecycleRepository;
+import org.eclipse.jetty.annotations.AnnotationConfiguration;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -65,6 +66,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
+import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -263,14 +265,22 @@ public class OllieServer {
             webapp.setSecurityHandler(servletDefinition.getSecurityHandler());
           }
         } else if (servletDefinition.getServlet() != null) {
+          // Use a Servlet instance
           ServletHolder servletHolder = new ServletHolder(servletDefinition.getServlet());
           applicationContext.addServlet(servletHolder, servletDefinition.getPattern());
         } else {
+          // Use a Servlet class
           ServletHolder servletHolder = new ServletHolder(servletDefinition.getServletClass());
           servletHolder.setInitParameters(servletDefinition.getParameters());
           applicationContext.addServlet(servletHolder, servletDefinition.getPattern());
         }
       }
+    }
+
+    if(builder.webServletsPath() != null) {
+      WebAppContext webServletContext = new WebAppContext();
+      webServletContext.setContextPath(builder.webServletsPath());
+      webServletContext.setConfigurations(new Configuration[] { new AnnotationConfiguration() });
     }
 
     contextHandlerCollection.addHandler(applicationContext);
