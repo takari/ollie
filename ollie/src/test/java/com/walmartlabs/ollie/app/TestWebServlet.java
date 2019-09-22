@@ -20,21 +20,63 @@ package com.walmartlabs.ollie.app;
  * =====
  */
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.walmartlabs.ollie.config.Config;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-@WebServlet("/test")
+@Named
+@Singleton
+@WebServlet("/webservlet")
 public class TestWebServlet extends HttpServlet {
 
+    // Make sure components get @Injected correctly
+    private final TestComponent testComponent;
+    // Make sure configuration elements get @Injected correctly
+    private final String stringConfig;
+
+    @Inject
+    public TestWebServlet(TestComponent testComponent, @Config("servlet.config.string") String stringConfig) {
+        this.testComponent = testComponent;
+        this.stringConfig = stringConfig;
+    }
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // We are outputting JSON so we can use RESTEasy's nice JSON parsing capabilities in tests
+        response.setContentType(MediaType.APPLICATION_JSON);
+        ObjectMapper mapper = new ObjectMapper();
         try (PrintWriter out = response.getWriter()) {
-            out.write("webservlet");
+            out.write(mapper.writerWithDefaultPrettyPrinter().writeValueAsString(new TestOutput(testComponent.message(), stringConfig)));
+        }
+    }
+
+    class TestOutput {
+
+        String testComponentMessage;
+        String stringConfig;
+
+        public TestOutput(String testComponentMessage, String stringConfig) {
+            this.testComponentMessage = testComponentMessage;
+            this.stringConfig = stringConfig;
+        }
+
+        public String getTestComponentMessage() {
+            return testComponentMessage;
+        }
+
+        public String getStringConfig() {
+            return stringConfig;
         }
     }
 }

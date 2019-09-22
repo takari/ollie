@@ -9,9 +9,9 @@ package com.walmartlabs.ollie;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -24,6 +24,21 @@ import static java.time.temporal.ChronoUnit.DAYS;
 import static java.util.Collections.list;
 import static java.util.Comparator.naturalOrder;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Sets;
+import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
+import com.walmartlabs.ollie.guice.InjectorBuilder;
+import com.walmartlabs.ollie.guice.OllieServerComponents;
+import com.walmartlabs.ollie.guice.OllieShutdownManager;
+import com.walmartlabs.ollie.lifecycle.Lifecycle;
+import com.walmartlabs.ollie.lifecycle.LifecycleRepository;
+import com.walmartlabs.ollie.model.FilterDefinition;
+import com.walmartlabs.ollie.model.ServletDefinition;
+import com.walmartlabs.ollie.model.StaticResourceDefinition;
+import io.airlift.security.pem.PemReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -37,17 +52,16 @@ import java.security.cert.X509Certificate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import com.google.common.collect.Sets;
-import com.google.inject.Injector;
-import com.walmartlabs.ollie.guice.*;
-import com.walmartlabs.ollie.lifecycle.Lifecycle;
-import com.walmartlabs.ollie.lifecycle.LifecycleRepository;
-import org.eclipse.jetty.annotations.AnnotationConfiguration;
+import javax.servlet.Servlet;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletContextListener;
+import javax.servlet.SessionCookieConfig;
+import javax.servlet.http.HttpServlet;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
@@ -66,22 +80,9 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
-import org.eclipse.jetty.webapp.Configuration;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.common.collect.ImmutableSet;
-import com.walmartlabs.ollie.model.FilterDefinition;
-import com.walmartlabs.ollie.model.ServletDefinition;
-import com.walmartlabs.ollie.model.StaticResourceDefinition;
-
-import io.airlift.security.pem.PemReader;
-
-import javax.inject.Inject;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextListener;
-import javax.servlet.SessionCookieConfig;
 
 // http://stackoverflow.com/questions/20043097/jetty-9-embedded-adding-handlers-during-runtime
 
@@ -101,10 +102,8 @@ public class OllieServer {
 
   public OllieServer(OllieServerBuilder builder) {
     this.server = build(builder);
-    this.certificateExpiration = loadAllX509Certificates(builder).stream()
-      .map(X509Certificate::getNotAfter)
-      .min(naturalOrder())
-      .map(date -> ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()));
+    this.certificateExpiration = loadAllX509Certificates(builder).stream().map(X509Certificate::getNotAfter).min(naturalOrder())
+        .map(date -> ZonedDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault()));
   }
 
   public List<Lifecycle> tasks() {
@@ -157,10 +156,8 @@ public class OllieServer {
         }
       }
 
-      List<String> includedCipherSuites = builder.includedCipherSuites;
-      sslContextFactory.setIncludeCipherSuites(includedCipherSuites.toArray(new String[includedCipherSuites.size()]));
-      List<String> excludedCipherSuites = builder.excludedCipherSuites;
-      sslContextFactory.setExcludeCipherSuites(excludedCipherSuites.toArray(new String[excludedCipherSuites.size()]));
+      // https://github.com/eclipse/jetty.project/issues/3466
+      sslContextFactory.setEndpointIdentificationAlgorithm(null);
       sslContextFactory.setSecureRandomAlgorithm(builder.secureRandomAlgorithm);
       sslContextFactory.setWantClientAuth(true);
       sslContextFactory.setSslSessionTimeout((int) builder.sslSessionTimeout);
@@ -170,9 +167,6 @@ public class OllieServer {
       httpsConnector = new ServerConnector(server, sslConnectionFactory, new HttpConnectionFactory(httpsConfiguration));
       httpsConnector.setName("https");
       httpsConnector.setPort(builder.port);
-      //httpsConnector.setIdleTimeout(config.getNetworkMaxIdleTime().toMillis());
-      //httpsConnector.setHost(nodeInfo.getBindIp().getHostAddress());
-      //httpsConnector.setAcceptQueueSize(config.getHttpAcceptQueueSize());
 
       server.addConnector(httpsConnector);
     }
@@ -183,8 +177,6 @@ public class OllieServer {
       httpConnector = new ServerConnector(server, new HttpConnectionFactory(baseHttpConfiguration));
       httpConnector.setName("http");
       httpConnector.setPort(builder.port);
-      // httpConnector.setIdleTimeout(config.getNetworkMaxIdleTime().toMillis());
-      // httpConnector.setHost(nodeInfo.getBindIp().getHostAddress());
       server.addConnector(httpConnector);
     }
 
@@ -217,17 +209,49 @@ public class OllieServer {
       sessionHandler.setMaxInactiveInterval(builder.sessionMaxInactiveInterval);
     }
 
+    //
+    // Set up the Guice Injector, create all the bindings and scan for annotations
+    //
     ServletContext servletContext = applicationContext.getServletContext();
     ExecutorService executor = Executors.newCachedThreadPool();
     LifecycleRepository taskRepository = new LifecycleRepository(executor);
     shutdownManager = new OllieShutdownManager(taskRepository, builder.shutdownListeners);
-    Injector injector = new InjectorBuilder(builder, executor, taskRepository, servletContext, shutdownManager).injector();
-    ServletContextListener contextListener  = null;
+    InjectorBuilder injectorBuilder = new InjectorBuilder(builder, executor, taskRepository, servletContext, shutdownManager);
+    Injector injector = injectorBuilder.injector();
+
+    // Build up a list of all the configured contexts and make sure they are not clobbered by any  @WebServlet contextPaths
+    Map<String,String> configuredContextPaths = Maps.newHashMap();
+    configuredContextPaths.put(builder.api(), "Ollie REST System");
+    configuredContextPaths.put(builder.docs(), "Ollie REST System");
+    for(ServletDefinition servletDefinition : builder.servletDefinitions) {
+      configuredContextPaths.put(servletDefinition.getPattern(), servletDefinition.getServlet() != null ? servletDefinition.getServlet().toString() : servletDefinition.getServletClass().getName());
+    }
+
+    //
+    // At this point the Injector is created and all the Module.configure() methods have executed
+    //
+    for (Map.Entry<String, TypeLiteral<? extends HttpServlet>> entry : injectorBuilder.webServlets().entrySet()) {
+      String contextPath = entry.getKey();
+      TypeLiteral<? extends HttpServlet> typeLiteral = entry.getValue();
+      Servlet servlet = injector.getInstance(Key.get(typeLiteral));
+      if(configuredContextPaths.containsKey(contextPath)) {
+        // The @WebServet class com.walmartlabs.ollie.app.TestWebServlet uses the contextPath '/testservlet' which is already in use by com.walmartlabs.ollie.app.TestServlet.
+        throw new RuntimeException(
+                String.format("The @WebServet %s uses the contextPath '%s' which is already in use by %s.", servlet.getClass(), contextPath, configuredContextPaths.get(contextPath)));
+      }
+      ServletHolder servletHolder = new ServletHolder(servlet);
+      applicationContext.addServlet(servletHolder, contextPath);
+      // This is the way to have a servlet respond to multiple context paths to support @WebServlets properly
+      // and deal with multiple patterns for Siesta that Concord is currently using
+      //applicationContext.getServletHandler().addServletWithMapping(servletHolder, contextPath);
+    }
+
+    ServletContextListener contextListener = null;
 
     components = injector.getInstance(OllieServerComponents.class);
     // Trigger the execution of the tasks. Hopefully there is a more elegant way in Guice to trigger
     // the scanning an discovery of instances we want managed by a ProvisionerListener
-    for(Lifecycle task : components.tasks()) {
+    for (Lifecycle task : components.tasks()) {
       task.toString();
     }
 
@@ -246,7 +270,7 @@ public class OllieServer {
     }
 
     if (builder.filterDefintions.size() > 0) {
-      logger.info("Setting up servlet filters.");      
+      logger.info("Setting up servlet filters.");
       for (FilterDefinition filterDefinition : builder.filterDefintions) {
         String[] patterns = filterDefinition.getPatterns();
         for (String pattern : patterns) {
@@ -275,12 +299,6 @@ public class OllieServer {
           applicationContext.addServlet(servletHolder, servletDefinition.getPattern());
         }
       }
-    }
-
-    if(builder.webServletsPath() != null) {
-      WebAppContext webServletContext = new WebAppContext();
-      webServletContext.setContextPath(builder.webServletsPath());
-      webServletContext.setConfigurations(new Configuration[] { new AnnotationConfiguration() });
     }
 
     contextHandlerCollection.addHandler(applicationContext);
@@ -379,8 +397,7 @@ public class OllieServer {
   }
 
   public Long getDaysUntilCertificateExpiration() {
-    return certificateExpiration.map(date -> ZonedDateTime.now().until(date, DAYS))
-      .orElse(null);
+    return certificateExpiration.map(date -> ZonedDateTime.now().until(date, DAYS)).orElse(null);
   }
 
   public void start() {
@@ -409,7 +426,7 @@ public class OllieServer {
   }
 
   public int port() {
-    return ((ServerConnector)server.getConnectors()[0]).getLocalPort();
+    return ((ServerConnector) server.getConnectors()[0]).getLocalPort();
   }
 
   public static OllieServerBuilder builder() {

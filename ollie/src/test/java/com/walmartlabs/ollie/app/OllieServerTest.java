@@ -22,6 +22,7 @@ package com.walmartlabs.ollie.app;
 
 import org.junit.Test;
 
+import static io.restassured.RestAssured.given;
 import static io.restassured.RestAssured.when;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
@@ -49,11 +50,39 @@ public class OllieServerTest extends AbstractOllieServerTest {
                         equalTo("super-secret"));
 
         // TestServlet
-        when().get(url("/testservlet")).then().body(containsString("servlet-config-string"));
+        when()
+                .get(url("/testservlet"))
+                .then()
+                .body(containsString("servlet-config-string"));
+
         // Swagger
-        when().get(url("/api/docs")).then().body("swagger", equalTo("2.0"));
+        when()
+                .get(url("/api/docs"))
+                .then()
+                .body("swagger", equalTo("2.0"));
+
         // @WebServlet
-        when().get(url("/servlets/webservlet")).then().body(containsString("webservlet"));
+        when()
+                .get(url("/webservlet"))
+                .then()
+                .body(
+                        "stringConfig", equalTo("servlet-config-string"),
+                        "testComponentMessage", equalTo("hello-from-the-test-component"));
+
+        // TestRealm and authentication
+        when()
+                .get(url("/test/realms/secret"))
+                .then()
+                .assertThat()
+                .statusCode(401); // no auth we get 401
+        given()
+                .auth()
+                .basic("test", "test")
+                .when()
+                .get(url("/test/realms/secret"))
+                .then()
+                .assertThat()
+                .statusCode(200); // with auth 200
     }
 
     @Test
@@ -62,12 +91,15 @@ public class OllieServerTest extends AbstractOllieServerTest {
         assertTrue(((TestTaskWithHighPriority) server.tasks().get(0)).start);
         assertTrue(((TestTaskWithLowPriority) server.tasks().get(1)).start);
 
-        // Need to find a better way to hide this during testing. The shutdown hook will be called during normal
-        // JVM operations when a SIGTERM occurs but during testing we need to have our shutdown manager called
+        // Need to find a better way to hide this during testing. The shutdown hook will be called
+        // during normal
+        // JVM operations when a SIGTERM occurs but during testing we need to have our shutdown manager
+        // called
         // sooner than that so we can verify it has run correctly.
         server.shutdownManager().shutdown();
 
-        // In our case here we manually triggered the shutdown manager which will run Lifecycle::stop on all
+        // In our case here we manually triggered the shutdown manager which will run Lifecycle::stop on
+        // all
         // our tasks. For our TestTask it will set the public field stop to true.
         assertTrue(((TestTaskWithHighPriority) server.tasks().get(0)).stop);
         assertTrue(((TestTaskWithLowPriority) server.tasks().get(1)).stop);

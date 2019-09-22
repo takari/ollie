@@ -24,24 +24,22 @@ import org.sonatype.siesta.server.SiestaServlet;
 
 import com.google.inject.servlet.ServletModule;
 import com.walmartlabs.ollie.OllieServerBuilder;
-import com.walmartlabs.ollie.config.OllieConfigurationModule;
 
 import javax.servlet.ServletContext;
 
 public class OllieServletModule extends ServletModule {
 
-  private final OllieServerBuilder serverConfiguration;
+  private final OllieServerBuilder builder;
   private final ServletContext servletContext;
 
   public OllieServletModule(OllieServerBuilder config, ServletContext servletContext) {
-    this.serverConfiguration = config;
+    this.builder = config;
     this.servletContext = servletContext;
   }
       
   @Override
   protected void configureServlets() {
-    bind(OllieServerBuilder.class).toInstance(serverConfiguration);
-    OllieJaxRsModule jaxRsModule = new OllieJaxRsModule(serverConfiguration);
+    OllieJaxRsModule jaxRsModule = new OllieJaxRsModule(builder);
     install(jaxRsModule);
     //TODO: clean up this mess
     String apiPattern = jaxRsModule.apiPattern();
@@ -49,12 +47,11 @@ public class OllieServletModule extends ServletModule {
       apiPattern += "/*";
     }
     serve(apiPattern, jaxRsModule.morePatterns()).with(SiestaServlet.class, jaxRsModule.parameters());
-    install(new OllieConfigurationModule(serverConfiguration));
 
-    OllieSecurityModuleProvider securityModuleProvider = serverConfiguration.securityModuleProvider();
+    OllieSecurityModuleProvider securityModuleProvider = builder.securityModuleProvider();
     if (securityModuleProvider == null) {
       securityModuleProvider = OllieSecurityModule::new;
     }
-    install(securityModuleProvider.get(serverConfiguration, servletContext));
+    install(securityModuleProvider.get(builder, servletContext));
   }
 }
