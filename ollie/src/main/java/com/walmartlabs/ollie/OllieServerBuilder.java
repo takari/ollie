@@ -70,6 +70,7 @@ public class OllieServerBuilder {
     int port = 8080;
     int minThreads = 2;
     int maxThreads = 200;
+    int threadIdleTimeout = 0;
 
     boolean sessionsEnabled = false;
     int sessionMaxInactiveInterval = -1;
@@ -249,8 +250,27 @@ public class OllieServerBuilder {
         return minThreads;
     }
 
+    public OllieServerBuilder minThreads(int minThreads) {
+        this.minThreads = minThreads;
+        return this;
+    }
+
     public int maxThreads() {
         return maxThreads;
+    }
+
+    public OllieServerBuilder maxThreads(int maxThreads) {
+        this.maxThreads = maxThreads;
+        return this;
+    }
+
+    public int threadIdleTimeout() {
+        return threadIdleTimeout;
+    }
+
+    public OllieServerBuilder threadIdleTimeout(int threadIdleTimeout) {
+        this.threadIdleTimeout = threadIdleTimeout;
+        return this;
     }
 
     public OllieServerBuilder sessionsEnabled(boolean sessionsEnabled) {
