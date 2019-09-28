@@ -117,7 +117,7 @@ public class OllieServer {
     logger.info("port = {}", builder.port);
     QueuedThreadPool threadPool = new QueuedThreadPool(builder.maxThreads);
     threadPool.setMinThreads(builder.minThreads);
-    // threadPool.setIdleTimeout(Ints.checkedCast(config.getThreadMaxIdleTime().toMillis()));
+    threadPool.setIdleTimeout(builder.threadIdleTimeout);
     threadPool.setName("http-worker");
     Server server = new Server(threadPool);
 
