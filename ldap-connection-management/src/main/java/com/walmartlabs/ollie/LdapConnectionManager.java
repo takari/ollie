@@ -1,6 +1,25 @@
 package com.walmartlabs.ollie;
 
-import com.sun.jndi.ldap.LdapCtxFactory;
+/*-
+ * *****
+ * Ollie
+ * -----
+ * Copyright (C) 2018 - 2019 Takari
+ * -----
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * =====
+ */
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,12 +35,21 @@ public class LdapConnectionManager {
     private List<String> ldapServers;
     private int currentServerIndex;
     private final int maxRetries;
+    private final LdapCtxFactoryWrapper ctxFactory;
     private final static Logger logger = LoggerFactory.getLogger(LdapConnectionManager.class);
 
     public LdapConnectionManager(List<String> ldapServers, int maxRetries) {
         this.ldapServers = ldapServers == null ? new ArrayList<>() : ldapServers;
         this.currentServerIndex = 0;
         this.maxRetries = maxRetries;
+        this.ctxFactory = new DefaultLdapCtxFactoryWrapper();
+    }
+
+    public LdapConnectionManager(List<String> ldapServers, int maxRetries, LdapCtxFactoryWrapper ctxFactory) {
+        this.ldapServers = ldapServers == null ? new ArrayList<>() : ldapServers;
+        this.currentServerIndex = 0;
+        this.maxRetries = maxRetries;
+        this.ctxFactory = ctxFactory;
     }
 
     public LdapContext getLdapCtxInstance(Hashtable<String, String> props) throws NamingException {
@@ -30,13 +58,13 @@ public class LdapConnectionManager {
             while (currentServerIndex < ldapServers.size()) {
                 String serverName = ldapServers.get(currentServerIndex);
                 try {
-                    LdapContext ctx = (LdapContext) LdapCtxFactory.getLdapCtxInstance(serverName, props);
+                    LdapContext ctx = ctxFactory.getLdapCtxInstance(serverName, props);
                     logger.debug("Ldap connection to {} -> success", serverName);
                     return ctx;
                 } catch (NamingException e) {
-                    logger.debug("failed to connect to {}. Trying next ldap server.");
-                    if (currentServerIndex == ldapServers.size() - 1 && retries == maxRetries) {
-                        logger.warn("Failed to connect to all known servers: {}", e.getExplanation());
+                    logger.debug("failed to connect to {}. Trying next ldap server.", serverName);
+                    if (currentServerIndex == ldapServers.size() - 1 && retries == maxRetries - 1) {
+                        logger.warn("Failed to connect to all known servers: {}", e.toString());
                         throw e;
                     }
                     currentServerIndex++;
