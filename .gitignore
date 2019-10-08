@@ -14,3 +14,4 @@ test-output/
 .settings
 .pmdruleset.xml
 .pmd
+*.DS_Store
