@@ -23,6 +23,7 @@ package com.walmartlabs.ollie;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.naming.AuthenticationException;
 import javax.naming.CommunicationException;
 import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
@@ -61,7 +62,7 @@ public class LdapConnectionManager {
                     LdapContext ctx = ctxFactory.getLdapCtxInstance(serverName, props);
                     logger.debug("Ldap connection to {} -> success", serverName);
                     return ctx;
-                } catch (NamingException e) {
+                } catch (CommunicationException e) {
                     logger.debug("failed to connect to {}. Trying next ldap server.", serverName);
                     if (currentServerIndex == ldapServers.size() - 1 && retries == maxRetries - 1) {
                         logger.warn("Failed to connect to all known servers: {}", e.toString());

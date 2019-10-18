@@ -34,6 +34,7 @@ import java.util.Hashtable;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -79,11 +80,15 @@ public class LdapConnectionManagerTest {
         assertEquals(ctx2, context);
     }
 
-    @Test(expected = AuthenticationException.class)
+    @Test
     public void badAuthTest() throws NamingException {
-        connectionManager.getLdapCtxInstance(badProps);
-        //once for each server, retry twice. 2*3=6
-        verify(ctxFactory.getLdapCtxInstance(any(), any()), times(6));
+        try {
+            connectionManager.getLdapCtxInstance(badProps);
+        } catch (Exception e) {
+            assertTrue(e instanceof AuthenticationException);
+        }
+        //first server fails. doesn't move on to next server
+        verify(ctxFactory, times(1)).getLdapCtxInstance(any(), any());
     }
 
     @Test
