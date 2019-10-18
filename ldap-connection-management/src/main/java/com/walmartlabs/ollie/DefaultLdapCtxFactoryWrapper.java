@@ -22,13 +22,29 @@ package com.walmartlabs.ollie;
 
 import com.sun.jndi.ldap.LdapCtxFactory;
 
+import javax.naming.CommunicationException;
 import javax.naming.NamingException;
+import javax.naming.directory.BasicAttributes;
+import javax.naming.directory.SearchControls;
 import javax.naming.ldap.LdapContext;
 import java.util.Hashtable;
 
 public class DefaultLdapCtxFactoryWrapper implements LdapCtxFactoryWrapper{
     @Override
     public LdapContext getLdapCtxInstance(String serverName, Hashtable<String, String> props) throws NamingException {
-        return (LdapContext) LdapCtxFactory.getLdapCtxInstance(serverName, props);
+        LdapContext ctx = (LdapContext) LdapCtxFactory.getLdapCtxInstance(serverName, props);
+
+        SearchControls searchCtls = new SearchControls();
+        searchCtls.setSearchScope(0);
+        try {
+            BasicAttributes attributes = (BasicAttributes) ctx.getAttributes("", new String[]{"currentTime"});
+            if (attributes == null || attributes.size() == 0) {
+                throw new CommunicationException("Could not execute query on domain controller");
+            } else {
+                return ctx;
+            }
+        } catch (NamingException e) {
+            throw e;
+        }
     }
 }

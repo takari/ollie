@@ -33,19 +33,19 @@ import java.util.List;
 public class DomainControllerUrlResolver {
 
     /**
-     * finds all domain controllers urls in a given LDAP domain
+     * finds all domain controllers from a given SRV lookup query.
      *
-     * @param domain
+     * @param srvQuery
      * @return
      * @throws NamingException if domain is not responsive
      */
-    public static List<String> findLDAPServersInWindowsDomain(String domain) throws NamingException {
+    public List<String> findLDAPServersInWindowsDomain(String srvQuery) throws NamingException {
         List<String> servers = new ArrayList<String>();
         Hashtable<String, String> env = new Hashtable<String, String>();
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.dns.DnsContextFactory");
         env.put("java.naming.provider.url", "dns:");
         DirContext ctx = new InitialDirContext(env);
-        Attributes attributes = ctx.getAttributes("_ldap._tcp.dc._msdcs." + domain, new String[]{"SRV"}); // that's how Windows domain controllers are registered in DNS
+        Attributes attributes = ctx.getAttributes(srvQuery, new String[]{"SRV"}); // that's how Windows domain controllers are registered in DNS
         Attribute a = attributes.get("SRV");
         for (int i = 0; i < a.size(); i++) {
             String srvRecord = a.get(i).toString();
