@@ -61,7 +61,7 @@ public class DefaultLdapCtxFactoryWrapper implements LdapCtxFactoryWrapper{
             OffsetDateTime odt = OffsetDateTime.parse (time, f);
             long dcTime = odt.toInstant().toEpochMilli();
             long lag = currentTime - dcTime;
-            if (lag < MAX_DC_DELAY) {
+            if (lag > MAX_DC_DELAY) {
                 throw new CommunicationException("Domain Controller is not up to date");
             }
         }
