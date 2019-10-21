@@ -27,6 +27,7 @@ import org.mockito.MockitoAnnotations;
 
 import javax.naming.AuthenticationException;
 import javax.naming.CommunicationException;
+import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
 import java.util.Arrays;
@@ -107,5 +108,4 @@ public class LdapConnectionManagerTest {
         //assert that it retries previously failing server1
         assertEquals(ctx1, connectionManager.getLdapCtxInstance(goodProps));
     }
-
 }
