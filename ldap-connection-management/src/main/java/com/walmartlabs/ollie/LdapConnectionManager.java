@@ -63,9 +63,9 @@ public class LdapConnectionManager {
                     logger.debug("Ldap connection to {} -> success", serverName);
                     return ctx;
                 } catch (CommunicationException e) {
-                    logger.debug("failed to connect to {}. Trying next ldap server.", serverName);
+                    logger.debug("failed to connect to {}. Trying next ldap server. cause: {}", serverName, e.getMessage());
                     if (currentServerIndex == ldapServers.size() - 1 && retries == maxRetries - 1) {
-                        logger.warn("Failed to connect to all known servers: {}", e.toString());
+                        logger.info("Failed to connect to all known servers: {}", e.toString());
                         throw e;
                     }
                     currentServerIndex++;
