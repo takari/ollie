@@ -1,4 +1,4 @@
-package com.walmartlabs.ollie;
+package com.walmartlabs.ollie.ldap;
 
 /*-
  * *****
@@ -25,5 +25,6 @@ import javax.naming.ldap.LdapContext;
 import java.util.Hashtable;
 
 public interface LdapCtxFactoryWrapper {
+
     LdapContext getLdapCtxInstance(String serverName, Hashtable<String, String> props) throws NamingException;
 }

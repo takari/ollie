@@ -1,4 +1,4 @@
-package com.walmartlabs.ollie;
+package com.walmartlabs.ollie.ldap;
 
 /*-
  * *****
@@ -9,9 +9,9 @@ package com.walmartlabs.ollie;
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
- * 
+ *
  *      http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -28,8 +28,7 @@ import javax.naming.directory.BasicAttributes;
 import javax.naming.ldap.LdapContext;
 import java.util.Hashtable;
 
-
-public class DefaultLdapCtxFactoryWrapper implements LdapCtxFactoryWrapper{
+public class DefaultLdapCtxFactoryWrapper implements LdapCtxFactoryWrapper {
 
     @Override
     public LdapContext getLdapCtxInstance(String serverName, Hashtable<String, String> props) throws NamingException {
@@ -38,7 +37,7 @@ public class DefaultLdapCtxFactoryWrapper implements LdapCtxFactoryWrapper{
         if (attributes == null || attributes.size() == 0) {
             throw new CommunicationException("Could not execute query on domain controller");
         }
-        return ctx;
 
+        return ctx;
     }
 }

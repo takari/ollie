@@ -20,6 +20,8 @@ package com.walmartlabs.ollie;
  * =====
  */
 
+import com.walmartlabs.ollie.ldap.LdapConnectionManager;
+import com.walmartlabs.ollie.ldap.LdapCtxFactoryWrapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -27,7 +29,6 @@ import org.mockito.MockitoAnnotations;
 
 import javax.naming.AuthenticationException;
 import javax.naming.CommunicationException;
-import javax.naming.Context;
 import javax.naming.NamingException;
 import javax.naming.ldap.LdapContext;
 import java.util.Arrays;

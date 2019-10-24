@@ -1,4 +1,4 @@
-package com.walmartlabs.ollie;
+package com.walmartlabs.ollie.ldap;
 
 /*-
  * *****
