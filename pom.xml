@@ -33,6 +33,7 @@
     <module>ollie</module>
     <module>ollie-configuration</module>
     <module>ollie-targetplatform</module>
+    <module>ldap-connection-management</module>
   </modules>
 
   <build>
