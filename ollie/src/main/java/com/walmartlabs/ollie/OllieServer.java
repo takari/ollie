@@ -63,12 +63,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.SessionCookieConfig;
 import javax.servlet.http.HttpServlet;
 import org.eclipse.jetty.jmx.MBeanContainer;
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
-import org.eclipse.jetty.server.SecureRequestCustomizer;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.server.SslConnectionFactory;
+import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.ContextHandler;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.handler.ResourceHandler;
@@ -305,6 +300,11 @@ public class OllieServer {
     StatisticsHandler statisticsHandler = new StatisticsHandler();
     statisticsHandler.setHandler(contextHandlerCollection);
     server.setHandler(statisticsHandler);
+
+    RequestLog requestLog = builder.requestLog();
+    if (requestLog != null) {
+      server.setRequestLog(requestLog);
+    }
 
     return server;
   }
