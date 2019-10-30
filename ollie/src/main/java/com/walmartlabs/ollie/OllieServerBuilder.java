@@ -33,6 +33,7 @@ import com.walmartlabs.ollie.model.ServletDefinition;
 import com.walmartlabs.ollie.model.StaticResourceDefinition;
 import org.apache.shiro.realm.Realm;
 import org.eclipse.jetty.security.SecurityHandler;
+import org.eclipse.jetty.server.RequestLog;
 import org.eclipse.jetty.servlets.CrossOriginFilter;
 
 import javax.servlet.Filter;
@@ -96,6 +97,8 @@ public class OllieServerBuilder {
     OllieSecurityModuleProvider securityModuleProvider;
     Set<OllieShutdownListener> shutdownListeners = Sets.newHashSet();
     private String webServletsPath;
+
+    private RequestLog requestLog;
 
     public OllieServer build() {
         filter("/*").through(CrossOriginFilter.class);
@@ -431,5 +434,14 @@ public class OllieServerBuilder {
 
     public String webServletsPath() {
         return webServletsPath;
+    }
+
+    public OllieServerBuilder requestLog(RequestLog requestLog) {
+        this.requestLog = requestLog;
+        return this;
+    }
+
+    public RequestLog requestLog() {
+        return requestLog;
     }
 }
