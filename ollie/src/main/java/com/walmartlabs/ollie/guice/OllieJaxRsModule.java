@@ -23,7 +23,6 @@ package com.walmartlabs.ollie.guice;
 import java.util.Arrays;
 import java.util.Map;
 
-import javax.servlet.annotation.WebServlet;
 import javax.ws.rs.Path;
 
 import org.slf4j.Logger;

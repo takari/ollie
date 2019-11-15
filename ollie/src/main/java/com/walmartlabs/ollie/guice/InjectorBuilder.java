@@ -34,6 +34,7 @@ import com.walmartlabs.ollie.config.OllieConfigurationModule;
 import com.walmartlabs.ollie.database.DatabaseModule;
 import com.walmartlabs.ollie.lifecycle.LifecycleManager;
 import com.walmartlabs.ollie.lifecycle.LifecycleRepository;
+import com.walmartlabs.ollie.util.StringArrayKey;
 import org.eclipse.sisu.space.BeanScanning;
 import org.eclipse.sisu.space.SpaceModule;
 import org.eclipse.sisu.space.URLClassSpace;
@@ -41,9 +42,12 @@ import org.eclipse.sisu.wire.WireModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.Filter;
 import javax.servlet.ServletContext;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
@@ -57,7 +61,8 @@ public class InjectorBuilder {
   private final LifecycleRepository taskRepository;
   private final OllieShutdownManager shutdownManager;
   private final ServletContext servletContext;
-  public Map<String, TypeLiteral<? extends HttpServlet>> webServlets = Maps.newLinkedHashMap();
+  private final Map<StringArrayKey, TypeLiteral<? extends HttpServlet>> webServlets = Maps.newLinkedHashMap();
+  private final Map<StringArrayKey, TypeLiteral<? extends Filter>> webFilters = Maps.newLinkedHashMap();
 
   public InjectorBuilder(
       OllieServerBuilder config,
@@ -108,10 +113,18 @@ public class InjectorBuilder {
                     // We have an HttpServlet and it is annotated with @WebServlet
                     if (HttpServlet.class.isAssignableFrom(type.getRawType()) && type.getRawType().getAnnotation(WebServlet.class) != null) {
                       WebServlet webServletAnnotation = type.getRawType().getAnnotation(WebServlet.class);
-                      String path = webServletAnnotation.value()[0];
-                      logger.info("Registering @WebServlet resource {} on {}.", type.getRawType(), path);
+                      String[] paths = webServletAnnotation.value();
+                      logger.info("Registering @WebServlet resource {} on {}.", type.getRawType(), Arrays.toString(paths));
                       // TODO: there has to be a better way to create a TypeLiteral here
-                      webServlets.put(webServletAnnotation.value()[0], (TypeLiteral<? extends HttpServlet>) type);
+                      webServlets.put(new StringArrayKey(paths), (TypeLiteral<? extends HttpServlet>) type);
+                    }
+
+                    if (Filter.class.isAssignableFrom(type.getRawType()) && type.getRawType().getAnnotation(WebFilter.class) != null) {
+                      WebFilter webFilterAnnotation = type.getRawType().getAnnotation(WebFilter.class);
+                      String[] paths = webFilterAnnotation.value();
+                      logger.info("Registering @WebFilter resource {} on {}.", type.getRawType(), Arrays.toString(paths));
+                      // TODO: there has to be a better way to create a TypeLiteral here
+                      webFilters.put(new StringArrayKey(paths), (TypeLiteral<? extends Filter>) type);
                     }
                   }
                 });
@@ -123,7 +136,11 @@ public class InjectorBuilder {
     modules.addAll(builder.modules());
   }
 
-  public Map<String, TypeLiteral<? extends HttpServlet>> webServlets() {
-      return webServlets;
+  public Map<StringArrayKey, TypeLiteral<? extends HttpServlet>> webServlets() {
+    return webServlets;
+  }
+
+  public Map<StringArrayKey, TypeLiteral<? extends Filter>> webFilters() {
+    return webFilters;
   }
 }
