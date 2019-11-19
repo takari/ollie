@@ -38,6 +38,7 @@ import com.walmartlabs.ollie.lifecycle.LifecycleRepository;
 import com.walmartlabs.ollie.model.FilterDefinition;
 import com.walmartlabs.ollie.model.ServletDefinition;
 import com.walmartlabs.ollie.model.StaticResourceDefinition;
+import com.walmartlabs.ollie.util.StringArrayKey;
 import io.airlift.security.pem.PemReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -51,16 +52,10 @@ import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletContextListener;
-import javax.servlet.SessionCookieConfig;
+import javax.servlet.*;
 import javax.servlet.http.HttpServlet;
 import org.eclipse.jetty.jmx.MBeanContainer;
 import org.eclipse.jetty.server.*;
@@ -225,20 +220,34 @@ public class OllieServer {
     //
     // At this point the Injector is created and all the Module.configure() methods have executed
     //
-    for (Map.Entry<String, TypeLiteral<? extends HttpServlet>> entry : injectorBuilder.webServlets().entrySet()) {
-      String contextPath = entry.getKey();
+
+    for (Map.Entry<StringArrayKey, TypeLiteral<? extends HttpServlet>> entry : injectorBuilder.webServlets().entrySet()) {
+      String[] contextPaths = entry.getKey().values();
       TypeLiteral<? extends HttpServlet> typeLiteral = entry.getValue();
       Servlet servlet = injector.getInstance(Key.get(typeLiteral));
-      if(configuredContextPaths.containsKey(contextPath)) {
-        // The @WebServet class com.walmartlabs.ollie.app.TestWebServlet uses the contextPath '/testservlet' which is already in use by com.walmartlabs.ollie.app.TestServlet.
-        throw new RuntimeException(
-                String.format("The @WebServet %s uses the contextPath '%s' which is already in use by %s.", servlet.getClass(), contextPath, configuredContextPaths.get(contextPath)));
-      }
       ServletHolder servletHolder = new ServletHolder(servlet);
-      applicationContext.addServlet(servletHolder, contextPath);
+
+      for (String contextPath : contextPaths) {
+        if (configuredContextPaths.containsKey(contextPath)) {
+          // The @WebServet class com.walmartlabs.ollie.app.TestWebServlet uses the contextPath '/testservlet' which is already in use by com.walmartlabs.ollie.app.TestServlet.
+          throw new RuntimeException(
+                  String.format("The @WebServet %s uses the contextPath '%s' which is already in use by %s.", servlet.getClass(), contextPath, configuredContextPaths.get(contextPath)));
+        }
+        applicationContext.addServlet(servletHolder, contextPath);
+      }
       // This is the way to have a servlet respond to multiple context paths to support @WebServlets properly
       // and deal with multiple patterns for Siesta that Concord is currently using
       //applicationContext.getServletHandler().addServletWithMapping(servletHolder, contextPath);
+    }
+
+    for (Map.Entry<StringArrayKey, TypeLiteral<? extends Filter>> entry : injectorBuilder.webFilters().entrySet()) {
+      String[] contextPaths = entry.getKey().values();
+      TypeLiteral<? extends Filter> typeLiteral = entry.getValue();
+      Filter filter = injector.getInstance(Key.get(typeLiteral));
+      FilterHolder filterHolder = new FilterHolder(filter);
+      for (String contextPath : contextPaths) {
+        applicationContext.addFilter(filterHolder, contextPath, EnumSet.of(DispatcherType.REQUEST, DispatcherType.ASYNC));
+      }
     }
 
     ServletContextListener contextListener = null;

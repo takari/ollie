@@ -69,6 +69,19 @@ public class OllieServerTest extends AbstractOllieServerTest {
                         "stringConfig", equalTo("servlet-config-string"),
                         "testComponentMessage", equalTo("hello-from-the-test-component"));
 
+        // @WebFilter
+        when()
+                .get(url("/webfilter"))
+                .then()
+                .assertThat()
+                .statusCode(543);
+
+        when()
+                .get(url("/webfilter2"))
+                .then()
+                .assertThat()
+                .statusCode(543);
+
         // TestRealm and authentication
         when()
                 .get(url("/test/realms/secret"))
