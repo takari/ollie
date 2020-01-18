@@ -72,6 +72,8 @@ public class OllieServerBuilder {
     int minThreads = 2;
     int maxThreads = 200;
     int threadIdleTimeout = 0;
+    //
+    int requestHeaderSize = 8 * 1024;
 
     boolean sessionsEnabled = false;
     int sessionMaxInactiveInterval = -1;
@@ -273,6 +275,15 @@ public class OllieServerBuilder {
 
     public OllieServerBuilder threadIdleTimeout(int threadIdleTimeout) {
         this.threadIdleTimeout = threadIdleTimeout;
+        return this;
+    }
+
+    public int requestHeaderSize() {
+        return requestHeaderSize;
+    }
+
+    public OllieServerBuilder requestHeaderSize(int requestHeaderSize) {
+        this.requestHeaderSize = requestHeaderSize;
         return this;
     }
 
