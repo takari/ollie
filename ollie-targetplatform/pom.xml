@@ -4,7 +4,7 @@
   <parent>
     <groupId>com.walmartlabs.ollie</groupId>
     <artifactId>ollie-parent</artifactId>
-    <version>0.0.36</version>
+    <version>0.0.37-SNAPSHOT</version>
   </parent>
   <artifactId>ollie-targetplatform</artifactId>
   <packaging>pom</packaging>
