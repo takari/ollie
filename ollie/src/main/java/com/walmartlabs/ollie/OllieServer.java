@@ -119,6 +119,7 @@ public class OllieServer {
     HttpConfiguration baseHttpConfiguration = new HttpConfiguration();
     baseHttpConfiguration.setSendServerVersion(false);
     baseHttpConfiguration.setSendXPoweredBy(false);
+    baseHttpConfiguration.setRequestHeaderSize(builder.requestHeaderSize());
 
     ServerConnector httpsConnector;
     if (builder.sslEnabled) {
