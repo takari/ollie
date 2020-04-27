@@ -24,6 +24,11 @@
 
   <dependencies>
     <dependency>
+      <groupId>com.walmartlabs.ollie</groupId>
+      <artifactId>ollie-config</artifactId>
+    </dependency>
+
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
@@ -171,10 +176,6 @@
     <dependency>
       <groupId>com.typesafe</groupId>
       <artifactId>config</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.reflections</groupId>
-      <artifactId>reflections</artifactId>
     </dependency>
     <dependency>
       <groupId>io.airlift</groupId>

@@ -20,8 +20,8 @@ package com.walmartlabs.ollie.config;
  * =====
  */
 
-import com.typesafe.config.Config;
 import com.typesafe.config.*;
+import com.typesafe.config.Config;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;

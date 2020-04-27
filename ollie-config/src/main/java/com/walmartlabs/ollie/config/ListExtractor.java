@@ -20,24 +20,26 @@ package com.walmartlabs.ollie.config;
  * =====
  */
 
-import com.typesafe.config.Config;
+import java.lang.reflect.Type;
+import java.util.List;
 
 /**
- * Extracts values from a particular {@link Config}.
+ * Extracts {@link List} values from a particular {@link Config}.
  * 
  * @author jason
  */
-interface ConfigExtractor {
-
+public interface ListExtractor {
   /**
    * @param config the {@link Config} to extract from
    * @param path the {@link Config} path
-   * @return the extracted value
+   * @return the extracted list value
    */
-  public Object extractValue(Config config, String path);
+  public List<?> extractListValue(com.typesafe.config.Config config, String path);
 
   /**
-   * @return the types this {@link ConfigExtractor} will extract for.
+   * @return the {@link List} type this {@link ListExtractor} extracts.
    */
-  public Class<?>[] getMatchingClasses();
+  public Type getMatchingParameterizedType();
 }
+
+
