@@ -20,20 +20,6 @@ package com.walmartlabs.ollie.config;
  * =====
  */
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.google.inject.*;
 import com.google.inject.Module;
 import com.typesafe.config.*;
@@ -46,8 +32,13 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
 
+import java.lang.annotation.Annotation;
+import java.lang.reflect.*;
+import java.util.*;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
 //import com.typesafe.config.Config;
-import com.walmartlabs.ollie.OllieServerBuilder;
 
 /**
  * Include this {@link Module} in your {@link Guice} bootstrapping to Automagically
@@ -76,18 +67,6 @@ public class OllieConfigurationModule extends AbstractModule {
     this.config = config;
     this.reflections = new Reflections(configBuilder);
     this.boundAnnotations = new HashSet<Config>();
-  }
-
-  /**
-   * Scans the specified packages for annotated classes, and applies Config values to them.
-   * 
-   * @param config the Config to derive values from
-   * @return The constructed TypesafeConfigModule.
-   */
-  public OllieConfigurationModule(OllieServerBuilder config) {
-    this(
-      config.packageToScan(),
-      new ConfigurationProcessor(config.name(), new EnvironmentSelector().select(), null, config.secrets()).process());
   }
 
   @SuppressWarnings({"rawtypes"})

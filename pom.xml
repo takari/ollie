@@ -30,8 +30,8 @@
   </properties>
 
   <modules>
+    <module>ollie-config</module>
     <module>ollie</module>
-    <module>ollie-configuration</module>
     <module>ollie-targetplatform</module>
     <module>ldap-connection-manager</module>
   </modules>

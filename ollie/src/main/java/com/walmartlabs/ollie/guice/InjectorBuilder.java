@@ -30,6 +30,8 @@ import com.google.inject.matcher.Matchers;
 import com.google.inject.spi.TypeEncounter;
 import com.google.inject.spi.TypeListener;
 import com.walmartlabs.ollie.OllieServerBuilder;
+import com.walmartlabs.ollie.config.ConfigurationProcessor;
+import com.walmartlabs.ollie.config.EnvironmentSelector;
 import com.walmartlabs.ollie.config.OllieConfigurationModule;
 import com.walmartlabs.ollie.database.DatabaseModule;
 import com.walmartlabs.ollie.lifecycle.LifecycleManager;
@@ -100,7 +102,10 @@ public class InjectorBuilder {
         });
     modules.add(new SpaceModule(new URLClassSpace(getClass().getClassLoader()), BeanScanning.CACHE));
     modules.add(new OllieServletModule(builder, servletContext));
-    modules.add(new OllieConfigurationModule(builder));
+
+    modules.add(new OllieConfigurationModule(builder.packageToScan(),
+            new ConfigurationProcessor(builder.name(), new EnvironmentSelector().select(), null, builder.secrets()).process()));
+
     modules.add(
         new AbstractModule() {
           @Override

@@ -20,16 +20,16 @@ package com.walmartlabs.ollie.config;
  * =====
  */
 
+import com.typesafe.config.ConfigMemorySize;
+import com.typesafe.config.ConfigObject;
+import com.typesafe.config.Config;
+
 import java.lang.reflect.Type;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
-import com.typesafe.config.Config;
-import com.typesafe.config.ConfigMemorySize;
-import com.typesafe.config.ConfigObject;
 
 public enum ListExtractors implements ListExtractor {
   BOOLEAN(Boolean.class) {
