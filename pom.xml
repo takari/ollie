@@ -8,7 +8,7 @@
   </parent>
   <groupId>com.walmartlabs.ollie</groupId>
   <artifactId>ollie-parent</artifactId>
-  <version>0.0.37-SNAPSHOT</version>
+  <version>0.0.37</version>
   <name>Ollie :: Parent</name>
   <packaging>pom</packaging>
 
@@ -71,4 +71,8 @@
       </plugin>
     </plugins>
   </build>
+
+  <scm>
+    <tag>ollie-parent-0.0.37</tag>
+  </scm>
 </project>
