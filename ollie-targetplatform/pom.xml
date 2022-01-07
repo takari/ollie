@@ -30,7 +30,7 @@
     <hikaricp.version>3.2.0</hikaricp.version>
     <postgres.version>42.2.5</postgres.version>
     <metrics.version>3.2.2</metrics.version>
-    <h2.version>1.4.197</h2.version>
+    <h2.version>2.0.206</h2.version>
   </properties>
 
   <dependencyManagement>
