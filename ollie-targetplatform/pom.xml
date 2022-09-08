@@ -28,7 +28,7 @@
     <jooq.version>3.11.3</jooq.version>
     <liquibase.version>3.5.1</liquibase.version> <!-- the newer versions (up to 3.5.3) have incorrect mappings for PG's blob/bytea -->
     <hikaricp.version>3.2.0</hikaricp.version>
-    <postgres.version>42.2.5</postgres.version>
+    <postgres.version>42.4.1</postgres.version>
     <metrics.version>3.2.2</metrics.version>
     <h2.version>1.4.197</h2.version>
   </properties>
