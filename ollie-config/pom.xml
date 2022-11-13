@@ -8,7 +8,7 @@
   </parent>
   <artifactId>ollie-config</artifactId>
   <packaging>takari-jar</packaging>
-  <name>Ollie :: Core</name>
+  <name>Ollie :: Config</name>
 
   <dependencyManagement>
     <dependencies>
