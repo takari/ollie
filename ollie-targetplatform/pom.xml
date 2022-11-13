@@ -21,7 +21,7 @@
     <javax.servlet.version>3.1.0</javax.servlet.version>
     <jetty.version>9.4.20.v20190813</jetty.version>
     <jooq.version>3.11.3</jooq.version>
-    <junit.version>4.12</junit.version>
+    <junit.version>4.13.1</junit.version>
     <liquibase.version>3.5.1</liquibase.version> <!-- the newer versions (up to 3.5.3) have incorrect mappings for PG's blob/bytea -->
     <logback.version>1.2.3</logback.version>
     <metrics.version>3.2.2</metrics.version>
