@@ -10,29 +10,32 @@
   <packaging>pom</packaging>
   <name>Ollie :: Target Platform</name>
   <properties>
-    <slf4jVersion>1.7.25</slf4jVersion>
-    <jetty.version>9.4.20.v20190813</jetty.version>
-    <sisu.inject.version>0.3.3</sisu.inject.version>
-    <shiro.version>1.3.2</shiro.version>
-    <guice.version>4.0</guice.version>
-    <guava.version>20.0</guava.version>
-    <logback.version>1.2.3</logback.version>
-    <siesta.version>2.3.1</siesta.version>
-    <resteasy.version>3.1.4.Final</resteasy.version>
-    <swagger.version>1.5.16</swagger.version>
-    <jackson.version>2.9.9</jackson.version>
-    <jackson.databind.version>2.9.10.1</jackson.databind.version>
-    <okhttp.version>3.10.0</okhttp.version>
     <airlift.version>0.171</airlift.version>
-    <jooq.version>3.11.3</jooq.version>
-    <liquibase.version>3.5.1</liquibase.version> <!-- the newer versions (up to 3.5.3) have incorrect mappings for PG's blob/bytea -->
-    <hikaricp.version>3.2.0</hikaricp.version>
-    <postgres.version>42.2.5</postgres.version>
-    <metrics.version>3.2.2</metrics.version>
-    <h2.version>1.4.197</h2.version>
-    <javax.servlet.version>3.1.0</javax.servlet.version>
-    <junit.version>4.12</junit.version>
+    <guava.version>20.0</guava.version>
+    <guice.version>4.0</guice.version>
     <hamcrest.version>1.3</hamcrest.version>
+    <hikaricp.version>3.2.0</hikaricp.version>
+    <!-- This appears to be the latest Jackson I can update to without updating siesta and resteasy -->
+    <jackson.databind.version>2.10.3</jackson.databind.version>
+    <jackson.version>2.10.3</jackson.version>
+    <javax.servlet.version>3.1.0</javax.servlet.version>
+    <jetty.version>9.4.20.v20190813</jetty.version>
+    <jooq.version>3.11.3</jooq.version>
+    <junit.version>4.12</junit.version>
+    <liquibase.version>3.5.1</liquibase.version> <!-- the newer versions (up to 3.5.3) have incorrect mappings for PG's blob/bytea -->
+    <logback.version>1.2.3</logback.version>
+    <metrics.version>3.2.2</metrics.version>
+    <okhttp.version>3.10.0</okhttp.version>
+    <postgres.version>42.2.5</postgres.version>
+    <reflections.version>0.9.11</reflections.version>
+    <rest.assured.version>3.1.0</rest.assured.version>
+    <resteasy.version>3.1.4.Final</resteasy.version>
+    <shiro.version>1.3.2</shiro.version>
+    <siesta.version>2.3.2</siesta.version>
+    <sisu.inject.version>0.3.3</sisu.inject.version>
+    <slf4jVersion>1.7.25</slf4jVersion>
+    <swagger.version>1.5.16</swagger.version>
+    <typesafe.config.version>1.3.2</typesafe.config.version>
   </properties>
 
   <dependencyManagement>
@@ -148,7 +151,7 @@
         <artifactId>jetty-annotations</artifactId>
         <version>${jetty.version}</version>
       </dependency>
-      <!-- JAXRS features -->
+      <!-- Siesta / JAXRS / RESTEasy -->
       <dependency>
         <groupId>javax.ws.rs</groupId>
         <artifactId>javax.ws.rs-api</artifactId>
@@ -164,12 +167,12 @@
         <artifactId>siesta-server</artifactId>
         <version>${siesta.version}</version>
       </dependency>
-      <!-- JSON -->
       <dependency>
         <groupId>io.takari.siesta</groupId>
         <artifactId>siesta-jackson2</artifactId>
         <version>${siesta.version}</version>
       </dependency>
+      <!-- Jackson -->
       <dependency>
         <groupId>com.fasterxml.jackson.core</groupId>
         <artifactId>jackson-annotations</artifactId>
@@ -190,7 +193,6 @@
         <artifactId>jackson-dataformat-yaml</artifactId>
         <version>${jackson.version}</version>
       </dependency>
-      <!-- YAML -->
       <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>resteasy-yaml-provider</artifactId>
@@ -249,12 +251,12 @@
       <dependency>
         <groupId>com.typesafe</groupId>
         <artifactId>config</artifactId>
-        <version>1.3.2</version>
+        <version>${typesafe.config.version}</version>
       </dependency>
       <dependency>
         <groupId>org.reflections</groupId>
         <artifactId>reflections</artifactId>
-        <version>0.9.11</version>
+        <version>${reflections.version}</version>
       </dependency>
       <!-- Airflift -->
       <dependency>
@@ -272,6 +274,27 @@
         <groupId>com.squareup.okhttp3</groupId>
         <artifactId>okhttp</artifactId>
         <version>${okhttp.version}</version>
+      </dependency>
+      <!-- Database -->
+      <dependency>
+        <groupId>org.jooq</groupId>
+        <artifactId>jooq</artifactId>
+        <version>${jooq.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.postgresql</groupId>
+        <artifactId>postgresql</artifactId>
+        <version>${postgres.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>com.zaxxer</groupId>
+        <artifactId>HikariCP</artifactId>
+        <version>${hikaricp.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.liquibase</groupId>
+        <artifactId>liquibase-core</artifactId>
+        <version>${liquibase.version}</version>
       </dependency>
       <!-- Testing -->
       <dependency>
@@ -295,38 +318,13 @@
       <dependency>
         <groupId>io.rest-assured</groupId>
         <artifactId>rest-assured</artifactId>
-        <version>3.1.0</version>
+        <version>${rest.assured.version}</version>
         <scope>test</scope>
-      </dependency>
-      <dependency>
-        <groupId>org.jooq</groupId>
-        <artifactId>jooq</artifactId>
-        <version>${jooq.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.postgresql</groupId>
-        <artifactId>postgresql</artifactId>
-        <version>${postgres.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.zaxxer</groupId>
-        <artifactId>HikariCP</artifactId>
-        <version>${hikaricp.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.liquibase</groupId>
-        <artifactId>liquibase-core</artifactId>
-        <version>${liquibase.version}</version>
       </dependency>
       <dependency>
         <groupId>io.dropwizard.metrics</groupId>
         <artifactId>metrics-core</artifactId>
         <version>${metrics.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>com.h2database</groupId>
-        <artifactId>h2</artifactId>
-        <version>${h2.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>
