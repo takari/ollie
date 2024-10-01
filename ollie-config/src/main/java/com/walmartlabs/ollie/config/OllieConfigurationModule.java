@@ -66,7 +66,7 @@ public class OllieConfigurationModule extends AbstractModule {
           new FieldAnnotationsScanner());
     this.config = config;
     this.reflections = new Reflections(configBuilder);
-    this.boundAnnotations = new HashSet<Config>();
+    this.boundAnnotations = new HashSet<>();
   }
 
   @SuppressWarnings({"rawtypes"})
@@ -102,22 +102,23 @@ public class OllieConfigurationModule extends AbstractModule {
 
   private void bindValue(Class<?> paramClass, Type paramType, Config annotation, boolean nullable) {
     // Prevents multiple bindings on the same annotation
-    if (!boundAnnotations.contains(annotation)) {
-      @SuppressWarnings("unchecked")
-      Key<Object> key = (Key<Object>) Key.get(paramType, annotation);
-      String configPath = annotation.value();
-      Object configValue = getConfigValue(paramClass, paramType, configPath, nullable);
-      if (configValue == null) {
-        if (nullable) {
-          bind(key).toProvider(NULL_PROVIDER);
-        } else {
-          throw new ConfigException.Missing(configPath);
-        }
-      } else {
-        bind(key).toInstance(configValue);
-      }
-      boundAnnotations.add(annotation);
+    if (boundAnnotations.contains(annotation)) {
+      return;
     }
+    @SuppressWarnings("unchecked")
+    Key<Object> key = (Key<Object>) Key.get(paramType, annotation);
+    String configPath = annotation.value();
+    Object configValue = getConfigValue(paramClass, paramType, configPath, nullable);
+    if (configValue == null) {
+      if (nullable) {
+        bind(key).toProvider(NULL_PROVIDER);
+      } else {
+        throw new ConfigException.Missing(configPath);
+      }
+    } else {
+      bind(key).toInstance(configValue);
+    }
+    boundAnnotations.add(annotation);
   }
 
   @SuppressWarnings({"unchecked", "rawtypes"})
@@ -137,8 +138,7 @@ public class OllieConfigurationModule extends AbstractModule {
       ConfigObject object = config.getObject(path);
       return object.unwrapped();
     } else if (valueType.equals(ConfigValueType.OBJECT)) {
-      Object bean = ConfigBeanFactory.create(config.getConfig(path), paramClass);
-      return bean;
+        return ConfigBeanFactory.create(config.getConfig(path), paramClass);
     } else if (valueType.equals(ConfigValueType.LIST) && List.class.isAssignableFrom(paramClass)) {
       Type listType = ((ParameterizedType) paramType).getActualTypeArguments()[0];
 
@@ -150,10 +150,7 @@ public class OllieConfigurationModule extends AbstractModule {
       } else {
         List<? extends com.typesafe.config.Config> configList = config.getConfigList(path);
         return configList.stream()
-          .map(cfg -> {
-            Object created = ConfigBeanFactory.create(cfg, (Class) listType);
-            return created;
-          })
+          .map(cfg -> ConfigBeanFactory.create(cfg, (Class) listType))
           .collect(Collectors.toList());
       }
     }
