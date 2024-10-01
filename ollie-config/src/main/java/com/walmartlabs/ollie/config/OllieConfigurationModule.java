@@ -34,8 +34,10 @@ import org.reflections.util.FilterBuilder;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.*;
+import java.net.URL;
 import java.util.*;
 import java.util.Optional;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 //import com.typesafe.config.Config;
@@ -55,10 +57,21 @@ public class OllieConfigurationModule extends AbstractModule {
   private final Set<Config> boundAnnotations;
 
   public OllieConfigurationModule(String packageToScan, com.typesafe.config.Config config) {
+    this(Collections.singletonList(packageToScan), config);
+  }
+
+  public OllieConfigurationModule(Collection<String> packagesToScan, com.typesafe.config.Config config) {
+    FilterBuilder filter = new FilterBuilder()
+            .includePackage(packagesToScan.toArray(new String[0]));
+
+    Collection<URL> urls = packagesToScan.stream()
+            .flatMap(p -> ClasspathHelper.forPackage(p).stream())
+            .collect(Collectors.toList());
+
     ConfigurationBuilder configBuilder =
       new ConfigurationBuilder()
-        .filterInputsBy(new FilterBuilder().includePackage(packageToScan))
-        .setUrls(ClasspathHelper.forPackage(packageToScan))
+        .filterInputsBy(filter)
+        .setUrls(urls)
         .setScanners(
           new TypeAnnotationsScanner(),
           new MethodParameterScanner(),
