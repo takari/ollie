@@ -23,6 +23,9 @@
   <properties>
     <!-- Takari Lifecycle -->
     <takari.javaSourceVersion>1.8</takari.javaSourceVersion>
+    <maven.compiler.release>${takari.javaSourceVersion}</maven.compiler.release>
+    <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
+    <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
     <maven.test.redirectTestOutputToFile>true</maven.test.redirectTestOutputToFile>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
