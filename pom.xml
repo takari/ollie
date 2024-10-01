@@ -22,7 +22,7 @@
 
   <properties>
     <!-- Takari Lifecycle -->
-    <takari.javaSourceVersion>1.8</takari.javaSourceVersion>
+    <takari.javaSourceVersion>17</takari.javaSourceVersion>
     <maven.compiler.release>${takari.javaSourceVersion}</maven.compiler.release>
     <maven.compiler.source>${maven.compiler.release}</maven.compiler.source>
     <maven.compiler.target>${maven.compiler.release}</maven.compiler.target>
